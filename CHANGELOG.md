@@ -7,7 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+- Codex and Gemini CLI support in the hook: `fireteam-activity.py codex|gemini` (beta, from their docs, checked with `tools/test_hook.py`)
+- Debrief dialog (`ctrl-shift-d`, DEBRIEF button): totals, per-operator stats and an MVP
+- A sound for each scorestreak you call in
+- Separate AK-47 and bullpup (FR 556) weapon silhouettes
+- The operations map shows each operator's weapon
+
+### Fixed
+- Cold-Blooded now also hides the TARGETS MISSED popup and sound for a failed test run
+
 ### Changed
+- Squad rows show the operator's weapon silhouette in the left slot instead of the same helmet for everyone
+- README: new "Reading the HUD" section
 - `LICENSE` is plain MIT so GitHub detects it; the hook credit, font and sound notes moved to `NOTICE`
 
 ## [0.1.0]

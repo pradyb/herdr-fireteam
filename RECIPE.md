@@ -1,9 +1,9 @@
 # Fireteam
 
-A military-shooter HUD for Herdr. A thin top bar holds the logo, a compass with a diamond per agent, the rank and
+A military-shooter, FPS-style gaming HUD for Herdr. A thin top bar holds the logo, a compass with a diamond per agent, the rank and
 the clock. A squad and operations column sits on the left, one big terminal in the middle, and a radar, kill feed,
-scorestreaks and operator card on the right, with a slim key-hint bar at the bottom. Every agent is an operator with
-a callsign, a weapon and a live action. Flat dark panels, 1px hairlines, one amber accent, stencil caps. Drawn natively,
+scorestreaks and operator card on the right, with a slim key-hint bar at the bottom. Every agent is an operator in a tactical squad,
+with a callsign, a weapon and a live action, like a game lobby. Flat dark panels, 1px hairlines, one amber accent, stencil caps. Drawn natively,
 no images except small SVG icons.
 
 ![Fireteam](preview.png)
@@ -46,7 +46,7 @@ Status colours in MODERN: working `#63d06a`, blocked `#ff4a3d`, done `#f2c230`, 
   Marksman (Dragunov), shells Sentry (Model 680), others Operator (1911).
 - **Events**: a poll every 1.2s diffs Herdr's statuses (working→done/idle is a kill: kill feed line, +1 kill, +1 streak
   charge, `CONTRACT CLEAR` popup +100 XP; →blocked `NEEDS BACKUP`; →working `ENGAGED`; new/gone agents) and reads
-  `~/.local/state/fireteam/<terminal>.json` (written by the optional Claude Code hook): `coups` increases are hits
+  `~/.local/state/fireteam/<terminal>.json` (written by the optional hook for Claude Code, Codex or Gemini CLI): `coups` increases are hits
   (+10 XP popup, hit tick), `errT` increases are damage, `tache` increases `CONTRACT ACCEPTED`, `essai` a range test,
   `commitT` `INTEL SECURED` +50, `pushT` `EXFIL CONFIRMED` +75, `subs` increases `DRONE DEPLOYED` +25, `act` gives the
   live action (RECON, FIRING, EXECUTING, RANGE TEST, COMMS UPLINK, RELOADING, ANALYSING). First look is a baseline, not an event.
@@ -60,10 +60,10 @@ Status colours in MODERN: working `#63d06a`, blocked `#ff4a3d`, done `#f2c230`, 
   dropped. Hardline: while the focused operator has it, streak costs are 1 lower (min 1).
 - **Clicks**: operator row, blip, compass diamond, map operator → `agent.focus {terminal}`; space header →
   `space.select {id}`; contract row/pin → `space.select` then `tab.select {id}`; `+ CONTRACT` `tab.new`; `+ OPERATION`
-  `space.new`; pane header buttons `pane.split`/`pane.zoom`/`pane.close {pane}`; MAP / `ctrl-shift-m` and
+  `space.new`; pane header buttons `pane.split`/`pane.zoom`/`pane.close {pane}`; MAP / `ctrl-shift-m`, DEBRIEF / `ctrl-shift-d` and
   gear / LOADOUT / `ctrl-shift-o` open dialogs; swatches set the pack; `SFX` toggles mute.
 - **Keys** (`layout:Fireteam` in `mods/fireteam/KEYS.json`): `ctrl-shift-b` / `ctrl-shift-j` `layout.toggle` the `squad`
-  / `side` blocks; `ctrl-shift-m` `fireteam.map`; `ctrl-shift-o` `fireteam.loadout`.
+  / `side` blocks; `ctrl-shift-m` `fireteam.map`; `ctrl-shift-d` `fireteam.debrief`; `ctrl-shift-o` `fireteam.loadout`.
 - **Sounds** (`mods/fireteam/sounds/*.mp3`, synthesised by `tools/make_sounds.py`): hit (rate-limited to one per 350ms),
   kill, dmg, ready (a streak became ready), info. Muted by shared `fireteam.mute`.
 - The session name is the terminal title with its leading status glyph removed (pane name first). It also sets the window title.
@@ -83,7 +83,7 @@ Status colours in MODERN: working `#63d06a`, blocked `#ff4a3d`, done `#f2c230`, 
   `nextCommand`, `openOverlay`/`closeOverlay`, `playSound`, `setWindowTitle`, `run`. Animation is native (`.loop`, `.spin`),
   no render timers except the 1.2s data poll and the 30s clock.
 - **Reads** `~/.local/state/fireteam/<terminal>.json`. No network, no `exec`/`hc`.
-- **Hook** `hooks/fireteam-activity.py`: async Claude Code hook (answers `{"async": true}` at once), keyed by `HC_TERMINAL_ID`.
+- **Hook** `hooks/fireteam-activity.py`: async Claude Code hook (answers `{"async": true}` at once), keyed by `HC_TERMINAL_ID`. With the argument `codex` or `gemini` it reads those agents' events (answers `{}`); `tools/test_hook.py` is its self-check.
 
 ## Watch out
 
