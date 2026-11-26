@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+- `LICENSE` is plain MIT so GitHub detects it; the hook credit, font and sound notes moved to `NOTICE`
+
 ## [0.1.0]
 
 ### Added
