@@ -1,9 +1,9 @@
 # Fireteam
 
-A military-shooter HUD for Herdr. A thin top bar holds the logo, a compass with a diamond per agent, the rank and
+A military-shooter, FPS-style gaming HUD for Herdr. A thin top bar holds the logo, a compass with a diamond per agent, the rank and
 the clock. A squad and operations column sits on the left, one big terminal in the middle, and a radar, kill feed,
-scorestreaks and operator card on the right, with a slim key-hint bar at the bottom. Every agent is an operator with
-a callsign, a weapon and a live action. Flat dark panels, 1px hairlines, one amber accent, stencil caps. Drawn natively,
+scorestreaks and operator card on the right, with a slim key-hint bar at the bottom. Every agent is an operator in a tactical squad,
+with a callsign, a weapon and a live action, like a game lobby. Flat dark panels, 1px hairlines, one amber accent, stencil caps. Drawn natively,
 no images except small SVG icons.
 
 ![Fireteam](preview.png)
