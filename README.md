@@ -22,10 +22,11 @@ Everything is drawn natively from live Herdr data; the screenshot above uses inv
 | **Kill feed** | A finished contract is a kill: `[unit] callsign <weapon> CONTRACT`. Also under fire, engaged, deployed, extracted, commits and pushes. |
 | **Scorestreaks** | Charged by finished contracts: UAV 3 (jump to the operator under fire), Cruise 5 (jump to a finished one), Gunship 7 (zoom the terminal), Juggernaut 9 (new terminal). |
 | **Operator card** | The focused operator: weapon, live action and stats from real tool calls (DAMAGE edits and commands, ACCURACY successes vs failures, RECON reads, DRONES subagents). |
-| **XP popup + sound** | A banner over the terminal for DIRECT HIT, DAMAGE TAKEN, CONTRACT ACCEPTED/CLEAR, RANGE CLEAR (tests), INTEL SECURED (commit), EXFIL CONFIRMED (push), DRONE DEPLOYED (subagent). Five synthesised sounds; `SFX ON/OFF` in the bottom bar. |
-| **Loadout** | The gear on a row, LOADOUT on the card, or `ctrl-shift-o`: 9 weapons, 8 camos, 3 perk slots. Saved per terminal. |
+| **XP popup + sound** | A banner over the terminal for DIRECT HIT, DAMAGE TAKEN, CONTRACT ACCEPTED/CLEAR, RANGE CLEAR (tests), INTEL SECURED (commit), EXFIL CONFIRMED (push), DRONE DEPLOYED (subagent). Nine synthesised sounds, including a stinger for each scorestreak you call in; `SFX ON/OFF` in the bottom bar. |
+| **Loadout** | The gear on a row, LOADOUT on the card, or `ctrl-shift-o`: 9 weapons (assault rifle, AK and bullpup have their own silhouettes), 8 camos, 3 perk slots. Saved per terminal. |
 | **Operations map** | `ctrl-shift-m` or the MAP button: operations as grid zones, contracts as pins, operators standing on them. Click to jump. |
 | **Rank** | PVT to GEN, one rank per 4 finished contracts. |
+| **Debrief** | `ctrl-shift-d` or the DEBRIEF button: contracts cleared, rank, streak points, and per-operator damage, accuracy, recon and drones with an MVP. |
 | **Camo packs** | Click a swatch in the bottom bar: MODERN, NVG, ARCTIC, ZOMBIES, HAZARD. Matching terminal themes (`Fireteam`, `Fireteam-NVG`, …) are in the settings theme picker. |
 
 **Perks** (each acts on the HUD): Ghost hides the operator from radar and compass; Cold-Blooded makes failed tools
@@ -57,12 +58,12 @@ tools/install.sh                                  # layout, themes, mod into ~/.
 herdr-app do layout.switch '{"name":"Fireteam"}'
 ```
 
-Then merge `mods/fireteam/KEYS.json` into your `keys.json`: `ctrl-shift-m` map, `ctrl-shift-o` loadout,
+Then merge `mods/fireteam/KEYS.json` into your `keys.json`: `ctrl-shift-m` map, `ctrl-shift-d` debrief, `ctrl-shift-o` loadout,
 `ctrl-shift-b` squad column, `ctrl-shift-j` radar column. Run `tools/install.sh` again after a `git pull`.
 It installs real files, not symlinks: Herdr hot-reloads mods and loads images only from real files in its home.
 Back to your own layout any time with `ctrl-shift-l`; `ctrl-alt-shift-escape` resets to the default layout.
 
-### Live events (optional, Claude Code)
+### Live events (optional: Claude Code, Codex, Gemini CLI)
 
 Herdr itself reports four states (working, blocked, done, idle). The hook adds a live action per agent, hit and
 damage events, and the stats. `tools/install.sh` links `hooks/fireteam-activity.py` to `~/.claude/hooks/`; register
@@ -74,8 +75,27 @@ it in `~/.claude/settings.json` for `UserPromptSubmit`, `PreToolUse`, `PostToolU
 ```
 
 It answers at once (async), does nothing outside Herdr, and writes `~/.local/state/fireteam/<terminal>.json`.
-Without it the HUD still works from Herdr's four states. Other agents would need their own hook writing the same file
-(fields are documented at the top of the script).
+Without it the HUD still works from Herdr's four states.
+
+**Codex and Gemini CLI** use the same script with an argument (`codex` or `gemini`), which maps their event and tool names
+onto the same live actions. These two are written from their public hook docs and checked with sample payloads
+(`python3 tools/test_hook.py`), not yet run against the real agents, so treat them as beta and open an issue if one misbehaves.
+
+Codex (`~/.codex/hooks.json`; review and trust it once with `/hooks`). Repeat the entry for `UserPromptSubmit`, `PreToolUse`,
+`PostToolUse`, `PreCompact`, `PostCompact`, `Stop`, `Interrupt`, `SubagentStart`, `SubagentStop`, `SessionStart`, `SessionEnd`:
+
+```json
+{ "hooks": { "PreToolUse": [{ "hooks": [{ "type": "command", "command": "python3 \"$HOME/.claude/hooks/fireteam-activity.py\" codex", "async": true, "timeout": 5 }] }] } }
+```
+
+Gemini CLI (`~/.gemini/settings.json`). Repeat for `BeforeAgent`, `AfterAgent`, `BeforeTool`, `AfterTool`, `PreCompress`,
+`SessionStart`, `SessionEnd` (Gemini waits for hooks, the script answers in milliseconds):
+
+```json
+{ "hooks": { "BeforeTool": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "python3 \"$HOME/.claude/hooks/fireteam-activity.py\" gemini", "timeout": 5000 }] }] } }
+```
+
+Codex has no tool-failure event, so its DAMAGE TAKEN and failed-test popups never fire; Claude Code and Gemini report both.
 
 ## What it reads and runs
 

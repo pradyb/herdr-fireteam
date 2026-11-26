@@ -13,6 +13,7 @@
       }
     },
     "ctrl-shift-m": "fireteam.map",
+    "ctrl-shift-d": "fireteam.debrief",
     "ctrl-shift-o": "fireteam.loadout"
   }
 }

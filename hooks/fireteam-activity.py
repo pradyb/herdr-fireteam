@@ -14,6 +14,10 @@ Claude Code hook (async, never blocks). Writes ~/.local/state/fireteam/<HC_TERMI
   essai    last test run {ok, t} (act "test" while it runs)   commitT / pushT  last git commit / push (ms)
 
 Outside Herdr (no HC_TERMINAL_ID) it does nothing. Subagents' own tool calls are ignored.
+
+One script for three agents: no argument = Claude Code, `codex` = OpenAI Codex CLI, `gemini` = Gemini CLI. The other two
+send the same kind of JSON under other event and tool names, translated to Claude Code's by ALIAS_* below.
+Known limit: Codex has no tool-failure event, so only Claude Code and Gemini report DAMAGE TAKEN.
 """
 import fcntl, json, os, re, sys, time
 
@@ -24,14 +28,25 @@ try:
     ev = json.load(sys.stdin)
 except Exception:
     sys.exit(0)
-# tell Claude Code not to wait for us (async hook response), then do the work
-print('{"async": true}', flush=True)
+AGENT = sys.argv[1] if len(sys.argv) > 1 else "claude"
+# Claude Code: tell it not to wait for us (async hook response). Codex and Gemini want plain JSON, "{}" is a no-op.
+print('{"async": true}' if AGENT == "claude" else "{}", flush=True)
 
 DIR = os.path.expanduser("~/.local/state/fireteam")
 os.makedirs(DIR, exist_ok=True)
 path = os.path.join(DIR, f"{term}.json")
-name = ev.get("hook_event_name", "")
-tool = ev.get("tool_name") or ""
+# Gemini and Codex event / tool names, as Claude Code calls them
+ALIAS_EVENT = {"BeforeAgent": "UserPromptSubmit", "BeforeTool": "PreToolUse", "AfterTool": "PostToolUse",
+               "PreCompress": "PreCompact", "AfterAgent": "Stop", "PostCompact": "SessionStart", "Interrupt": "Stop"}
+ALIAS_TOOL = {"run_shell_command": "Bash", "write_file": "Edit", "replace": "Edit", "apply_patch": "Edit",
+              "read_file": "Read", "read_many_files": "Read", "glob": "Read", "grep_search": "Read", "list_directory": "Read",
+              "google_web_search": "WebSearch", "web_fetch": "WebFetch"}
+name = ALIAS_EVENT.get(ev.get("hook_event_name", ""), ev.get("hook_event_name", ""))
+if ev.get("hook_event_name") == "PostCompact":
+    ev["source"] = "compact"
+if name == "PostToolUse" and isinstance(ev.get("tool_response"), dict) and ev["tool_response"].get("error"):
+    name = "PostToolUseFailure"  # Gemini: a failed tool has tool_response.error
+tool = ALIAS_TOOL.get(ev.get("tool_name") or "", ev.get("tool_name") or "")
 sub = bool(ev.get("agent_id"))
 now = int(time.time() * 1000)
 cmd = str((ev.get("tool_input") or {}).get("command") or "") if tool == "Bash" else ""

@@ -31,7 +31,7 @@ export default class MapView {
               const o = opOf(a.address, a.program), act = actOf(a.address);
               return h_flex().id(`mp-${a.address}`).gap(7).items_center().pl(16).cursor_pointer().hover((s) => s.bg(P.panel))
                 .on_click(go(() => run("agent.focus", { terminal: a.address })))
-                .child(icon("op-helmet", 14, 14, colorOf(P, a.status))).child(head(o.call, 12, P.accent)).child(txt(clip(sessionOf(a).toUpperCase(), 18), 10, P.text, 700).flex_none())
+                .child(icon(o.gunIcon, 26, 9, o.camo ?? colorOf(P, a.status))).child(head(o.call, 12, P.accent)).child(txt(clip(sessionOf(a).toUpperCase(), 18), 10, P.text, 700).flex_none())
                 .child(txt(act ? ACT[act] : STATUS[a.status]?.word ?? "", 10, colorOf(P, a.status), 800).flex_1().min_w(0).truncate())
                 .child(plates(P, a.status, 6, hasPerk(a.address, "quickfix") ? 1 : 0));
             }));

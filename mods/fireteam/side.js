@@ -17,6 +17,10 @@ export function openMap() {
   openOverlay({ mod: "fireteam", props: { role: "map" }, kind: "dialog", width: 0.82, height: 0.82 });
 }
 
+export function openDebrief() {
+  openOverlay({ mod: "fireteam", props: { role: "debrief" }, kind: "dialog", width: 0.7, height: 0.5 });
+}
+
 export default class Side {
   init(_p, cx) {
     this.prev = null; this.seen = new Map(); this.busy = false;
@@ -26,6 +30,7 @@ export default class Side {
     cx.spawn(async () => { for (;;) { // ctrl-shift-m, ctrl-shift-o (KEYS.json)
       const c = await nextCommand();
       if (c === "map") openMap();
+      else if (c === "debrief") openDebrief();
       else if (c === "loadout") { const f = agentsNow().find((x) => x.focused); if (f) openLoadout(f.address); }
     } });
   }
@@ -76,7 +81,7 @@ export default class Side {
         if ((s.coups ?? 0) > base) { const n = s.coups - base; bump(a.address, "hits", n); P(a, "hit", s.outil === "Bash" ? "COMMAND RUN" : "DIRECT HIT", 10 * n); }
         if ((s.errT ?? 0) > (old.errT ?? 0) && !hasPerk(a.address, "coldblooded")) { bump(a.address, "errs"); P(a, "dmg", "DAMAGE TAKEN", 0); } // COLD-BLOODED shrugs it off
         if (old.act === "medite" && s.act !== "medite" && hasPerk(a.address, "fasthands")) P(a, "kill", "RELOADED", 25); // FAST HANDS
-        if ((s.essai?.t ?? 0) > (old.essai?.t ?? 0)) P(a, s.essai.ok ? "kill" : "dmg", s.essai.ok ? "RANGE CLEAR" : "TARGETS MISSED", s.essai.ok ? 50 : 0);
+        if ((s.essai?.t ?? 0) > (old.essai?.t ?? 0) && (s.essai.ok || !hasPerk(a.address, "coldblooded"))) P(a, s.essai.ok ? "kill" : "dmg", s.essai.ok ? "RANGE CLEAR" : "TARGETS MISSED", s.essai.ok ? 50 : 0);
         if ((s.commitT ?? 0) > (old.commitT ?? 0)) { P(a, "kill", "INTEL SECURED", 50); line(a, "info", "COMMIT LOCKED IN"); }
         if ((s.pushT ?? 0) > (old.pushT ?? 0)) { P(a, "kill", "EXFIL CONFIRMED", 75); line(a, "info", "PUSHED: EXTRACTION"); }
         if ((s.subs ?? 0) > (old.subs ?? 0)) { bump(a.address, "subs"); P(a, "info", "DRONE DEPLOYED", 25); }
@@ -134,6 +139,7 @@ export default class Side {
   streaks(P, ags) {
     const have = Number(S("fireteam.streak") ?? 0);
     const call = (s) => {
+      sfx(`ss-${s.key}`);
       setShared("fireteam.streak", have - needOf(s, ags));
       setShared("fireteam.feed", [...(S("fireteam.feed") ?? []), { t: Date.now(), k: "warn", who: "COMMAND", unit: "HQ", gun: "", tgt: `${s.name} ONLINE` }].slice(-30));
       setShared("fireteam.pop", { t: Date.now(), kind: "info", text: `${s.name} ONLINE`, pts: 0, who: "HQ" });
