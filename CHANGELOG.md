@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.2.0]
+
 ### Added
 - Codex and Gemini CLI support in the hook: `fireteam-activity.py codex|gemini` (beta, from their docs, checked with `tools/test_hook.py`)
 - Debrief dialog (`ctrl-shift-d`, DEBRIEF button): totals, per-operator stats and an MVP
