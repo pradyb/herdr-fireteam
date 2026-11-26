@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Changed
+- Squad rows show the operator's weapon silhouette in the left slot instead of the same helmet for everyone
+- README: new "Reading the HUD" section
 - `LICENSE` is plain MIT so GitHub detects it; the hook credit, font and sound notes moved to `NOTICE`
 
 ## [0.1.0]

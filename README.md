@@ -37,6 +37,15 @@ Hardline (while that operator is focused) makes streaks cost one contract less.
 Roles come from the program: Claude Code is Recon, Codex Gunsmith, Gemini Medic, OpenCode/pi/amp/cursor
 Marksman, shells Sentry, anything else Operator. Callsign and unit tag come from a hash of the terminal address.
 
+## Reading the HUD
+
+- **Unit tag** (`TF`, `SC`, `RG`, `GH`, `SP`): Task Force, Shadow Co., Rangers, Ghosts, Spetsnaz. Cosmetic only. `HQ` in the kill feed is the system itself.
+- **Squad icon:** the operator's weapon. Its colour is the camo if one is set, otherwise the state colour.
+- **Kill feed line** `callsign <weapon> target`: a finished contract. The red target is the tab name.
+- **Scorestreak tile pulsing:** it has enough charge. Click it to spend the cost and use it. All operators share one pool of charge.
+- **Rank and XP** (top right): each finished contract is +25 XP and four make a rank, so `XP 25/100` is one contract in. The same count drives the kill total.
+- **Clock** (`2315Z`): your local time, written in a military style. It is not UTC.
+
 ## Install
 
 Ask your agent to add `herdr.dev/layouts/pradyb/herdr-fireteam`, or:
