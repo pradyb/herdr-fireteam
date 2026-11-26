@@ -82,6 +82,6 @@ role), `WEAPONS`, `CAMOS`, `PERKS`, `STREAKS` and `RANKS`. Sizes are in `layouts
 
 ## Credits
 
-By pradyb, MIT licensed. The Claude Code hook is derived from
+By pradyb, MIT licensed (see [LICENSE](LICENSE) and [NOTICE](NOTICE)). The Claude Code hook is derived from
 [World of Codecraft](https://github.com/kevinpardo/world-of-codecraft) by Kevin Pardo (MIT). The sounds are
 synthesised by `tools/make_sounds.py`. Fonts: Saira Stencil One and Rajdhani, SIL Open Font License.
