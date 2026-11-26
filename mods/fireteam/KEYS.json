@@ -1,0 +1,18 @@
+{
+  "layout:Fireteam": {
+    "ctrl-shift-b": {
+      "command": "layout.toggle",
+      "args": {
+        "id": "squad"
+      }
+    },
+    "ctrl-shift-j": {
+      "command": "layout.toggle",
+      "args": {
+        "id": "side"
+      }
+    },
+    "ctrl-shift-m": "fireteam.map",
+    "ctrl-shift-o": "fireteam.loadout"
+  }
+}

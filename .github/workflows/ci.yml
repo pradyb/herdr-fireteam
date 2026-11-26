@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JSON files parse
+        run: |
+          python3 - <<'PY'
+          import glob, json
+          for f in glob.glob("layouts/*.json") + glob.glob("themes/*.json") + glob.glob("mods/fireteam/*.json"):
+              json.load(open(f)); print("ok", f)
+          PY
+      - name: Hook compiles and installer parses
+        run: |
+          python3 -m py_compile hooks/fireteam-activity.py
+          sh -n tools/install.sh
+      - name: Every layout block names a mod that exists
+        run: |
+          python3 - <<'PY'
+          import json, os
+          def walk(n):
+              m = (n.get("content") or {}).get("mod")
+              if m: assert os.path.isdir(f"mods/{m}"), m
+              for c in n.get("children", []): walk(c)
+          walk(json.load(open("layouts/Fireteam.json"))); print("layout ok")
+          PY

@@ -1,0 +1,140 @@
+{
+  "id": "root",
+  "type": "column",
+  "titlebar": "none",
+  "traffic_lights": [
+    16,
+    18
+  ],
+  "theme": "Fireteam",
+  "font": "JetBrains Mono",
+  "ui_font": "Rajdhani",
+  "terminal_padding": [
+    10,
+    8
+  ],
+  "terminal_opacity": 1,
+  "preview": "layouts/Fireteam.svg",
+  "background": "#090b0a",
+  "padding": [
+    0,
+    0
+  ],
+  "resizable": false,
+  "children": [
+    {
+      "id": "top",
+      "type": "block",
+      "size": {
+        "px": 52
+      },
+      "window_drag": true,
+      "content": {
+        "mod": "fireteam",
+        "props": {
+          "role": "top"
+        }
+      }
+    },
+    {
+      "id": "bourg",
+      "type": "row",
+      "gap": 0,
+      "children": [
+        {
+          "id": "squad",
+          "type": "block",
+          "size": {
+            "px": 292
+          },
+          "min": 220,
+          "max": 440,
+          "content": {
+            "mod": "fireteam",
+            "props": {
+              "role": "squad"
+            }
+          }
+        },
+        {
+          "id": "main",
+          "type": "block",
+          "padding": [
+            8,
+            0
+          ],
+          "background": "#090b0a",
+          "content": {
+            "tab": "active",
+            "pane": {
+              "header": {
+                "content": {
+                  "mod": "fireteam",
+                  "props": {
+                    "role": "pane"
+                  }
+                },
+                "height": 26,
+                "position": "top",
+                "reveal": "always"
+              },
+              "background": "background",
+              "border": {
+                "width": 1,
+                "color": "#ffffff1c"
+              },
+              "focus": {
+                "width": 1,
+                "color": "#f2a516"
+              },
+              "radius": 0,
+              "gap": 8,
+              "lone": true
+            }
+          },
+          "floating": [
+            {
+              "id": "popup",
+              "content": {
+                "mod": "fireteam",
+                "props": {
+                  "role": "popup"
+                }
+              },
+              "edge": "top",
+              "align": "center"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "type": "block",
+          "size": {
+            "px": 262
+          },
+          "min": 220,
+          "max": 400,
+          "content": {
+            "mod": "fireteam",
+            "props": {
+              "role": "side"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "foot",
+      "type": "block",
+      "size": {
+        "px": 26
+      },
+      "content": {
+        "mod": "fireteam",
+        "props": {
+          "role": "foot"
+        }
+      }
+    }
+  ]
+}
