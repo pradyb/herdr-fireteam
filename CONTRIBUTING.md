@@ -31,5 +31,19 @@ invented demo data from `mods/fireteam/demo.js`, so no real projects end up in t
 - one file per HUD piece: `top.js`, `squad.js`, `side.js`, `pane.js`, `popup.js`, `map.js`, `loadout.js`
 - `layouts/Fireteam.json`: sizes and the layout tree
 
-Keep to the project's rules: native drawing only (no PNG chrome), no network calls, no programs run from the mod,
-and a perk or feature isn't done until it does something visible.
+CI runs the file checks (JSON, hook, installer, layout-to-mod) for every push and PR; `herdr-app check` needs the app, so run it yourself.
+
+## Guidelines
+
+- Keep the mod dependency-free and natively drawn (no PNG chrome); the only images are small SVG icons.
+- No network calls and no programs run from the mod (`exec`, `hc`). The hook uses the Python standard library only (3.8+).
+- A perk or feature isn't done until it does something visible in the HUD, and its description says what.
+- Never put real project names, paths, tokens or session names in code, `demo.js` or screenshots.
+- Update the README and `RECIPE.md` if you change user-facing behaviour, and add an entry to `CHANGELOG.md` for any change users would notice.
+- New hook events: add the field to the top of `hooks/fireteam-activity.py`, read it in `side.js`, and show it (popup, stat or action).
+
+## Questions
+
+For usage questions or half-formed ideas, use
+[Discussions](https://github.com/pradyb/herdr-fireteam/discussions) rather than
+the issue tracker. Issues are for reproducible bugs and concrete feature requests.
