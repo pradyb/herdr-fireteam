@@ -9,7 +9,7 @@
 import { S, agentsNow } from "./kit.js";
 import { agents, props, run, shared, setShared, home, readTextFile, nextCommand, openOverlay, setWindowTitle } from "herdr";
 import { dayKey, freshDay, todays, progress, newlyDone, medalsFor, DAILY_REWARD, levelOf, unlocked } from "./glory.js";
-import { pal, txt, head, icon, section, panel, div, h_flex, v_flex, opOf, colorOf, STREAKS, ACT, statsOf, stop, clip, pad2, rankNow, hasPerk, focusedHas, needOf, sessionOf, sfx, openLoadout } from "./kit.js";
+import { pal, txt, head, icon, section, panel, div, h_flex, v_flex, opOf, colorOf, STREAKS, ACT, statsOf, stop, clip, pad2, rankNow, rankOf, hasPerk, focusedHas, needOf, sessionOf, sfx, openLoadout } from "./kit.js";
 
 const R = 78; // radar radius
 const DIR = () => `${home()}/.local/state/fireteam`;
@@ -112,6 +112,12 @@ export default class Side {
         day.done.push(ch.k); bonus += DAILY_REWARD; dirty = true; snd = "ready";
         feed.push({ t: now, k: "warn", who: "COMMAND", unit: "HQ", gun: "", tgt: `CHALLENGE DONE · ${ch.n}` });
         pop = { t: now, kind: "kill", text: "CHALLENGE COMPLETE", pts: DAILY_REWARD * 25, who: ch.n };
+      }
+      // promotion: the rank after this poll is higher than before it (a reset only lowers it, no banner)
+      const rankBefore = rankOf(Number(S("fireteam.kills") ?? 0) + Number(S("fireteam.bonus") ?? 0)), rankAfter = rankOf(kills + bonus);
+      if (rankAfter.lv > rankBefore.lv) {
+        feed.push({ t: now, k: "warn", who: "COMMAND", unit: "HQ", gun: "", tgt: `PROMOTED TO ${rankAfter.name}` }); dirty = true; snd = "ready";
+        pop = { t: now, kind: "kill", text: `PROMOTED TO ${rankAfter.name}`, pts: 0, who: "NEW RANK" };
       }
       if (JSON.stringify(day) !== JSON.stringify(S("fireteam.day"))) setShared("fireteam.day", day);
       if (bonus !== Number(S("fireteam.bonus") ?? 0)) setShared("fireteam.bonus", bonus);

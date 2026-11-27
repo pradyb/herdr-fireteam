@@ -47,7 +47,7 @@ export default class Top {
       .child(head(rk.name, 18, P.accent))
       .child(v_flex().gap(3)
         .child(txt(rk.max ? "MAX RANK" : `${rk.into}/${rk.of} CONTRACTS`, 11, P.dim, 700))
-        .child(h_flex().gap(2).children(Array.from({ length: 4 }, (_, i) => div().w(16).h(4).bg(i < Math.floor((rk.into * 4) / rk.of) ? P.accent : P.line)))));
+        .child(h_flex().gap(2).children(Array.from({ length: 4 }, (_, i) => div().w(16).h(4).bg(i < Math.ceil((rk.into * 4) / rk.of) ? P.accent : P.line)))));
     return div().id("top").size_full().flex().items_center().px(10).gap(16).bg(P.bg).border_b_1().border_color(P.line)
       .child(div().w(76).flex_none())
       .child(h_flex().flex_none().gap(9).items_center().w(250)

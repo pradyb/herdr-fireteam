@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.5.1]
+
+### Added
+- A `PROMOTED TO <rank>` banner, kill-feed line and sound when your rank goes up
+
+### Changed
+- Operations: the tab name is normal weight, the folder stays bold
+- Squad: only the callsign and state word are bold; the action, role and session lines are normal weight
+
+### Fixed
+- The rank bar fills its first segment as soon as there is any progress (`6/25` was empty)
+
 ## [0.5.0]
 
 ### Changed
