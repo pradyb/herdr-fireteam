@@ -114,6 +114,8 @@ export function rankOf(kills) {
   const lv = Math.min(RANKS.length - 1, Math.floor(kills / 4));
   return { lv, name: RANKS[lv], into: kills % 4, of: 4, max: lv === RANKS.length - 1 };
 }
+/** Rank from contracts plus challenge rewards (shared "fireteam.bonus"). */
+export const rankNow = () => rankOf(Number(S("fireteam.kills") ?? 0) + Number(S("fireteam.bonus") ?? 0));
 export const STREAKS = [
   { key: "uav", name: "UAV", need: 3, icon: "ss-uav", tip: "UAV: jump to the operator under fire" },
   { key: "cruise", name: "CRUISE", need: 5, icon: "ss-cruise", tip: "Cruise Missile: jump to a finished contract" },
@@ -132,7 +134,7 @@ export const statsOf = (addr) => ({ hits: 0, errs: 0, reads: 0, subs: 0, ...(S("
 // ------------------------------------------------------------------ loadout: weapon, camo, perks (chosen in loadout.js)
 export const WEAPONS = [
   { n: "M4A1", i: "gun-ar", c: "ASSAULT" }, { n: "AK-47", i: "gun-ak", c: "ASSAULT" }, { n: "FR 556", i: "gun-bullpup", c: "ASSAULT" },
-  { n: "MP7", i: "gun-smg", c: "SMG" }, { n: "SA87", i: "gun-lmg", c: "LMG" }, { n: "DRAGUNOV", i: "gun-sniper", c: "MARKSMAN" },
+  { n: "MP7", i: "gun-smg", c: "SMG" }, { n: "SA87", i: "gun-lmg", c: "LMG" }, { n: "DRAGUNOV", i: "gun-sniper", c: "SNIPER" },
   { n: "MODEL 680", i: "gun-shotgun", c: "SHOTGUN" }, { n: "1911", i: "gun-pistol", c: "PISTOL" }, { n: "RPG-7", i: "gun-launcher", c: "LAUNCHER" },
 ];
 export const CAMOS = [
