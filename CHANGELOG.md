@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.0]
+
+### Added
+- Operations: each contract shows the folder of its terminal before the tab name (real case, tab name dimmer)
+- Operations: the git branch on each operation header, and elapsed minutes on a working contract
+
 ## [0.3.0]
 
 ### Added
