@@ -109,10 +109,12 @@ export function plates(P, st, w = 12, extra = 0) {
 }
 
 export const RANKS = ["PVT", "PFC", "CPL", "SGT", "SSG", "LT", "CPT", "MAJ", "COL", "GEN"];
-/** Rank from completed contracts: one rank per 4. */
+/** Rank from completed contracts: one rank per RANK_STEP. */
+export const RANK_STEP = 25; // finished contracts per rank (a challenge counts as two)
 export function rankOf(kills) {
-  const lv = Math.min(RANKS.length - 1, Math.floor(kills / 4));
-  return { lv, name: RANKS[lv], into: kills % 4, of: 4, max: lv === RANKS.length - 1 };
+  const lv = Math.min(RANKS.length - 1, Math.floor(kills / RANK_STEP));
+  const max = lv === RANKS.length - 1;
+  return { lv, name: RANKS[lv], into: max ? RANK_STEP : kills % RANK_STEP, of: RANK_STEP, max }; // at max rank the bar stays full
 }
 /** Rank from contracts plus challenge rewards (shared "fireteam.bonus"). */
 export const rankNow = () => rankOf(Number(S("fireteam.kills") ?? 0) + Number(S("fireteam.bonus") ?? 0));
