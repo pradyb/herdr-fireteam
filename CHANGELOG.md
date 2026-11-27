@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.1]
+
+### Fixed
+- Operations: long operation names are no longer cut off by the branch (the header reads `5 · NAME`, the branch is shorter)
+
 ## [0.4.0]
 
 ### Added
