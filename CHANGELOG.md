@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.5.2]
+
+### Fixed
+- Squad: the session name is bold and one size larger again, so it reads clearly under the role line
+
 ## [0.5.1]
 
 ### Added
