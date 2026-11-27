@@ -58,6 +58,9 @@ Status colours in MODERN: working `#63d06a`, blocked `#ff4a3d`, done `#f2c230`, 
   streak charge per kill. Overkill: popup XP ×2. Fast Hands: `RELOADED` +25 XP when the hook's `act` leaves `medite`.
   Tracker: while the focused operator has it, Ghosts show at 40%. Dead Silence: that operator's popups and sounds are
   dropped. Hardline: while the focused operator has it, streak costs are 1 lower (min 1).
+- **Medals, challenges, mastery** (`glory.js`, pure logic; state in shared `fireteam.day`, `fireteam.bonus`, `fireteam.mastery`): medals
+  (DOUBLE/TRIPLE CLEAR, FLAWLESS, BOSS DOWN, FIRST BLOOD) replace the CONTRACT CLEAR banner; three daily challenges (always "clear 5
+  contracts") in the CHALLENGES panel, +50 XP of rank each; a weapon levels 1 to 10 with hits and unlocks camos (a worn camo stays usable).
 - **Clicks**: operator row, blip, compass diamond, map operator → `agent.focus {terminal}`; space header →
   `space.select {id}`; contract row/pin → `space.select` then `tab.select {id}`; `+ CONTRACT` `tab.new`; `+ OPERATION`
   `space.new`; pane header buttons `pane.split`/`pane.zoom`/`pane.close {pane}`; MAP / `ctrl-shift-m`, DEBRIEF / `ctrl-shift-d` and

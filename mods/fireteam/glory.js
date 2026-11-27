@@ -44,3 +44,15 @@ export function medalsFor({ prior, now, errTache, worked, firstOfDay }) {
   if (firstOfDay) medals.push("FIRST BLOOD");
   return medals;
 }
+
+// ---- weapon mastery: a weapon levels up with hits (successful edits and commands) from any operator carrying it
+/** Hits needed for level 1..10. */
+export const LEVELS = [0, 10, 30, 60, 100, 150, 220, 300, 400, 520];
+/** Level a weapon needs before its camo can be picked. */
+export const CAMO_LEVEL = { STANDARD: 1, WOODLAND: 1, DESERT: 2, ARCTIC: 3, DIGITAL: 4, TIGER: 5, GOLD: 7, "DARK MATTER": 10 };
+export function levelOf(xp) {
+  let lv = 1; while (lv < LEVELS.length && xp >= LEVELS[lv]) lv++;
+  return { lv, xp, from: LEVELS[lv - 1], to: LEVELS[lv] ?? null, max: lv === LEVELS.length };
+}
+/** Camos that unlock when a weapon goes from level `a` to level `b`. */
+export const unlocked = (a, b) => Object.keys(CAMO_LEVEL).filter((c) => CAMO_LEVEL[c] > a && CAMO_LEVEL[c] <= b);

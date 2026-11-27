@@ -8,7 +8,7 @@
 
 import { S, agentsNow } from "./kit.js";
 import { agents, props, run, shared, setShared, home, readTextFile, nextCommand, openOverlay, setWindowTitle } from "herdr";
-import { dayKey, freshDay, todays, progress, newlyDone, medalsFor, DAILY_REWARD } from "./glory.js";
+import { dayKey, freshDay, todays, progress, newlyDone, medalsFor, DAILY_REWARD, levelOf, unlocked } from "./glory.js";
 import { pal, txt, head, icon, section, panel, div, h_flex, v_flex, opOf, colorOf, STREAKS, ACT, statsOf, stop, clip, pad2, rankNow, hasPerk, focusedHas, needOf, sessionOf, sfx, openLoadout } from "./kit.js";
 
 const R = 78; // radar radius
@@ -47,6 +47,9 @@ export default class Side {
       let day = S("fireteam.day"), bonus = Number(S("fireteam.bonus") ?? 0);
       day = day && day.d === dayKey() ? { ...day, done: [...day.done] } : freshDay(dayKey());
       const tick = (k, n = 1) => { day[k] = (day[k] ?? 0) + n; };
+      let mast = S("fireteam.mastery");
+      if (!mast) { mast = {}; for (const a of ags) { const g = opOf(a.address, a.program).gun; mast[g] = (mast[g] ?? 0) + statsOf(a.address).hits; } } // first run: hits so far count
+      else mast = { ...mast };
       const line = (a, k, tgt) => { const o = opOf(a.address, a.program), ses = sessionOf(a); feed.push({ t: now, k, who: o.call, unit: o.unit, gun: o.gunIcon, tgt: k === "kill" || !ses ? tgt : `${tgt} · ${clip(ses.toUpperCase(), 18)}` }); dirty = true; };
       let snd = null;
       const P = (a, kind, text, pts) => {
@@ -89,7 +92,11 @@ export default class Side {
         if (!s || !old) continue; // first look: a baseline, not an event
         const newTask = s.tache !== old.tache, base = newTask ? 0 : old.coups ?? 0;
         if (newTask) P(a, "info", "CONTRACT ACCEPTED", 0);
-        if ((s.coups ?? 0) > base) { const n = s.coups - base; bump(a.address, "hits", n); P(a, "hit", s.outil === "Bash" ? "COMMAND RUN" : "DIRECT HIT", 10 * n); }
+        if ((s.coups ?? 0) > base) { const n = s.coups - base; bump(a.address, "hits", n); P(a, "hit", s.outil === "Bash" ? "COMMAND RUN" : "DIRECT HIT", 10 * n);
+          const gun = opOf(a.address, a.program).gun, was = levelOf(mast[gun] ?? 0).lv; mast[gun] = (mast[gun] ?? 0) + n;
+          const now2 = levelOf(mast[gun]).lv;
+          if (now2 > was) { const un = unlocked(was, now2); P(a, "kill", `${gun} LEVEL ${now2}`, 0); line(a, "warn", `★ ${gun} LEVEL ${now2}${un.length ? ` · ${un.join(", ")} CAMO` : ""}`); snd = "ready"; }
+        }
         if ((s.errT ?? 0) > (old.errT ?? 0) && !hasPerk(a.address, "coldblooded")) { bump(a.address, "errs"); P(a, "dmg", "DAMAGE TAKEN", 0); } // COLD-BLOODED shrugs it off
         if (old.act === "medite" && s.act !== "medite" && hasPerk(a.address, "fasthands")) P(a, "kill", "RELOADED", 25); // FAST HANDS
         if ((s.essai?.t ?? 0) > (old.essai?.t ?? 0) && s.essai.ok) tick("tests");
@@ -108,6 +115,7 @@ export default class Side {
       }
       if (JSON.stringify(day) !== JSON.stringify(S("fireteam.day"))) setShared("fireteam.day", day);
       if (bonus !== Number(S("fireteam.bonus") ?? 0)) setShared("fireteam.bonus", bonus);
+      if (JSON.stringify(mast) !== JSON.stringify(S("fireteam.mastery"))) setShared("fireteam.mastery", mast);
 
       // 3. publish only what changed
       if (JSON.stringify(acts) !== JSON.stringify(S("fireteam.act") ?? {})) { setShared("fireteam.act", acts); dirty = true; }
@@ -216,7 +224,7 @@ export default class Side {
       .child(bar("RECON", st.reads / 40, String(st.reads)))
       .child(bar("DRONES", st.subs / 10, String(st.subs)))
       .child(h_flex().id("loadout-btn").h(26).items_center().justify_center().gap(6).border_1().border_color(P.accent).cursor_pointer().hover((s) => s.bg(P.panel2))
-        .on_mouse_down("left", stop).on_click(() => openLoadout(cur.address)).child(txt(`LOADOUT · ${o.gun}${o.camoName !== "STANDARD" ? ` · ${o.camoName}` : ""}`, 11, P.accent, 800).truncate()));
+        .on_mouse_down("left", stop).on_click(() => openLoadout(cur.address)).child(txt(`LOADOUT · ${o.gun} L${levelOf((S("fireteam.mastery") ?? {})[o.gun] ?? 0).lv}${o.camoName !== "STANDARD" ? ` · ${o.camoName}` : ""}`, 11, P.accent, 800).truncate()));
   }
 
   render(_cx) {

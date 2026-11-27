@@ -1,6 +1,6 @@
 // Self-check for mods/fireteam/glory.js. Run: node tools/test_glory.mjs
 import assert from "node:assert/strict";
-import { todays, freshDay, newlyDone, progress, medalsFor, dayKey, POOL } from "../mods/fireteam/glory.js";
+import { LEVELS, CAMO_LEVEL, levelOf, unlocked, todays, freshDay, newlyDone, progress, medalsFor, dayKey, POOL } from "../mods/fireteam/glory.js";
 
 const t = todays("2026-11-27");
 assert.equal(t.length, 3); assert.equal(t[0].k, "clears"); assert.equal(new Set(t.map((c) => c.k)).size, 3);
@@ -25,4 +25,13 @@ assert.deepEqual(m({ prior: [60000] }), ["DOUBLE CLEAR"]);
 assert.deepEqual(m({ prior: [90000, 95000] }), ["TRIPLE CLEAR"]);
 assert.deepEqual(m({ prior: [30000] }), []); // 70 s ago: outside the window
 assert.deepEqual(m({ prior: [95000], errTache: 0, worked: true, firstOfDay: true }), ["DOUBLE CLEAR", "FLAWLESS", "FIRST BLOOD"]);
+
+assert.equal(levelOf(0).lv, 1); assert.equal(levelOf(9).lv, 1); assert.equal(levelOf(10).lv, 2);
+assert.equal(levelOf(149).lv, 5); assert.equal(levelOf(150).lv, 6);
+assert.deepEqual([levelOf(30).from, levelOf(30).to], [30, 60]);
+assert.ok(levelOf(520).max && levelOf(9999).lv === LEVELS.length && levelOf(9999).to === null);
+assert.deepEqual(unlocked(1, 2), ["DESERT"]); assert.deepEqual(unlocked(3, 6), ["DIGITAL", "TIGER"]);
+assert.deepEqual(unlocked(1, 10), ["DESERT", "ARCTIC", "DIGITAL", "TIGER", "GOLD", "DARK MATTER"]);
+assert.deepEqual(unlocked(5, 5), []);
+assert.equal(CAMO_LEVEL.STANDARD, 1);
 console.log("glory ok");

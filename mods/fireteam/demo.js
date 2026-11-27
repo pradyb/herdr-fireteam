@@ -25,7 +25,7 @@ export const DEMO = {
     space(4, 4, "infra", "main", [tab(5, "review", "idle")]),
   ],
   shared: {
-    "fireteam.kills": 9, "fireteam.streak": 5,
+    "fireteam.mastery": { "M4A1": 130, "MP7": 42, "SA87": 12, "AK-47": 60 }, "fireteam.kills": 9, "fireteam.streak": 5,
     "fireteam.act": { d1: { act: "code", tool: "Edit" }, d4: { act: "eclaire", tool: "Grep" } },
     "fireteam.stats": { d1: { hits: 42, errs: 3, reads: 18, subs: 2 }, d4: { hits: 11, errs: 1, reads: 30, subs: 0 } },
     "fireteam.loadout": { d1: { gun: "M4A1", camo: "WOODLAND", perks: ["ghost", "scavenger", "hardline"] }, d2: { gun: "MP7", camo: "GOLD", perks: ["quickfix", "overkill", "tracker"] }, d3: { gun: "SA87", camo: "ARCTIC", perks: [null, null, null] } },

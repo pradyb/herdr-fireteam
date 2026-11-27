@@ -3,7 +3,8 @@
 // everywhere: the weapon silhouette and name, the camo colour on rows, headers and the card.
 // Every perk changes how the HUD behaves; see its description and where kit.js hasPerk / focusedHas is read.
 
-import { agentsNow } from "./kit.js";
+import { levelOf, CAMO_LEVEL } from "./glory.js";
+import { agentsNow, S } from "./kit.js";
 import { agents, props, closeOverlay } from "herdr";
 import { pal, txt, head, icon, section, panel, div, h_flex, v_flex, opOf, colorOf, STATUS, sessionOf, WEAPONS, CAMOS, PERKS, setLoadout, clip, stop } from "./kit.js";
 
@@ -13,8 +14,9 @@ export default class Loadout {
     const a = agentsNow().find((x) => x.address === addr);
     if (!a) return div().size_full().bg(P.panel).child(txt("OPERATOR NOT FOUND", 13, P.dim, 700).p(16));
     const o = opOf(a.address, a.program), c = colorOf(P, a.status), tint = o.camo ?? P.text;
+    const mast = S("fireteam.mastery") ?? {}, lvOf = (g) => levelOf(mast[g] ?? 0), me = lvOf(o.gun);
     const pick = (patch) => () => setLoadout(addr, patch);
-    const tile = (id, on, kids, fn, w = 118) => v_flex().id(id).w(w).flex_none().h(56).items_center().justify_center().gap(4).cursor_pointer()
+    const tile = (id, on, kids, fn, w = 118) => v_flex().id(id).w(w).flex_none().h(64).items_center().justify_center().gap(4).cursor_pointer()
       .border_1().border_color(on ? P.accent : P.line).bg(on ? P.panel2 : "#00000000").hover((s) => s.bg(P.panel2)).on_mouse_down("left", stop).on_click(fn).children(kids);
 
     const left = v_flex().w(300).flex_none().gap(10).p(14).border_r_1().border_color(P.line)
@@ -24,6 +26,8 @@ export default class Loadout {
       .child(txt(STATUS[a.status]?.word ?? "", 12, c, 800))
       .child(div().h(110).flex().items_center().justify_center().bg(P.panel2).border_1().border_color(P.line).child(icon(o.gunIcon, 220, 80, tint)))
       .child(head(o.gun, 20, P.text))
+      .child(txt(me.max ? "MASTERY · MAX LEVEL" : `MASTERY · LEVEL ${me.lv} · ${me.xp}/${me.to} HITS`, 11, P.text, 800))
+      .child(div().h(4).bg(P.line).child(div().h(4).w(me.max ? 272 : Math.round(272 * (me.xp - me.from) / (me.to - me.from))).bg(P.accent)))
       .child(txt(`CAMO · ${o.camoName}`, 12, o.camo ?? P.dim, 800))
       .child(v_flex().gap(4).children(o.perks.map((k, i) => {
         const p = PERKS[i].find((x) => x.k === k);
@@ -38,11 +42,16 @@ export default class Loadout {
         .children(["ASSAULT", "SMG", "LMG", "SNIPER", "SHOTGUN", "PISTOL", "LAUNCHER"].map((cat) => h_flex().gap(8).items_center()
           .child(txt(cat, 10, P.dim, 800).w(70).flex_none())
           .children(WEAPONS.filter((w) => w.c === cat).map((w) => tile(`w-${w.n}`, w.n === o.gun,
-            [icon(w.i, 64, 22, w.n === o.gun ? tint : P.dim), txt(w.n, 12, P.text, 800)], pick({ gun: w.n })))))))
+            [icon(w.i, 64, 22, w.n === o.gun ? tint : P.dim), txt(w.n, 12, P.text, 800), txt(`LVL ${lvOf(w.n).lv}`, 9, P.dim, 800)], pick({ gun: w.n })))))))
       .child(v_flex().gap(8).child(head("Camo", 13, P.accent))
-        .child(h_flex().flex_wrap().gap(8).children(CAMOS.map((k) => v_flex().id(`c-${k.n}`).w(86).flex_none().items_center().gap(5).cursor_pointer().on_mouse_down("left", stop).on_click(pick({ camo: k.n }))
-          .child(div().w(54).h(34).bg(k.c ?? P.line).border_1().border_color(k.n === o.camoName ? "#ffffff" : P.line))
-          .child(txt(k.n, 10, k.n === o.camoName ? P.text : P.dim, 800))))))
+        .child(h_flex().flex_wrap().gap(8).children(CAMOS.map((k) => {
+          const lock = CAMO_LEVEL[k.n] > me.lv && k.n !== o.camoName; // a camo you already wear stays usable
+          return v_flex().id(`c-${k.n}`).w(86).flex_none().items_center().gap(5).opacity(lock ? 0.4 : 1).on_mouse_down("left", stop)
+            .when(!lock, (e) => e.cursor_pointer().on_click(pick({ camo: k.n })))
+            .tooltip(lock ? `Locked: needs ${o.gun} level ${CAMO_LEVEL[k.n]}` : k.n)
+            .child(div().w(54).h(34).bg(k.c ?? P.line).border_1().border_color(k.n === o.camoName ? "#ffffff" : P.line))
+            .child(txt(lock ? `LVL ${CAMO_LEVEL[k.n]}` : k.n, 10, k.n === o.camoName ? P.text : P.dim, 800));
+        }))))
       .child(v_flex().gap(8).child(head("Perks", 13, P.accent))
         .child(h_flex().gap(10).children(PERKS.map((slot, i) => v_flex().flex_1().min_w(0).gap(6)
           .child(txt(`PERK ${i + 1}`, 10, P.dim, 800))
