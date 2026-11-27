@@ -18,8 +18,8 @@ export default class Squad {
         .child(h_flex().gap(6).items_center()
           .child(txt(`[${o.unit}]`, 11, P.dim, 700).flex_none())
           .child(head(o.call, 14, a.focused ? P.accent : P.text).truncate()))
-        .child(actOf(a.address) && a.status === "working" ? txt(ACT[actOf(a.address)], 11, P.good, 800).truncate() : txt(`${o.role} · ${o.gun}`, 11, P.dim, 700).truncate())
-        .child(txt(sessionOf(a) ? `▸ ${clip(sessionOf(a).toUpperCase(), 26)}` : "", 11, P.text, 800).truncate()))
+        .child(actOf(a.address) && a.status === "working" ? txt(ACT[actOf(a.address)], 11, P.good, 500).truncate() : txt(`${o.role} · ${o.gun}`, 11, P.dim, 500).truncate())
+        .child(txt(sessionOf(a) ? `▸ ${clip(sessionOf(a).toUpperCase(), 26)}` : "", 11, P.text, 500).truncate()))
       .child(v_flex().flex_none().items_end().gap(4)
         .child(txt(STATUS[a.status]?.word ?? "", 11, c, 800))
         .child(plates(P, a.status, 9, hasPerk(a.address, "quickfix") ? 1 : 0)))
@@ -48,7 +48,7 @@ export default class Squad {
             .child(div().w(4).h(4).flex_none().bg(c))
             .child(h_flex().flex_1().min_w(0).gap(6).items_center()
               .when(dirOf.has(t.id), (e) => e.child(txt(clip(dirOf.get(t.id), 14), 12, P.text, 700).flex_none()))
-              .child(txt(clip(t.named ? t.name : `Contract ${t.index}`, 22), 12, P.dim, 700).min_w(0).truncate()))
+              .child(txt(clip(t.named ? t.name : `Contract ${t.index}`, 22), 12, P.dim, 500).min_w(0).truncate()))
             .when(t.status === "working" && t.working_since, (e) => e.child(txt(`${Math.max(1, Math.floor((Date.now() - t.working_since) / 60000))}m`, 11, P.good, 700)))
             .when(t.panes > 1, (e) => e.child(txt(`×${t.panes}`, 11, P.dim, 700)));
         }));
