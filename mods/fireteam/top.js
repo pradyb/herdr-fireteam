@@ -5,7 +5,7 @@
 
 import { S, agentsNow, spacesNow } from "./kit.js";
 import { agents, spaces, focused, run } from "herdr";
-import { pal, hash, sessionOf, hasPerk, focusedHas, txt, head, icon, div, h_flex, v_flex, opOf, colorOf, rankNow, zulu, stop, clip, pad2 } from "./kit.js";
+import { pal, hash, sessionOf, hasPerk, focusedHas, txt, head, icon, div, h_flex, v_flex, opOf, colorOf, rankNow, prestigeNow, zulu, stop, clip, pad2 } from "./kit.js";
 import { shared } from "herdr";
 
 const W = 600, SPAN = 90, PPD = W / 2 / SPAN; // px per degree
@@ -44,7 +44,7 @@ export default class Top {
     const bearing = cur ? opOf(cur.address, cur.program).bearing : 0;
     const sp = sps.find((s) => s.active), rk = rankNow();
     const rank = h_flex().flex_none().gap(8).items_center()
-      .child(head(rk.name, 18, P.accent))
+      .child(head(`${prestigeNow() ? `★${prestigeNow()} ` : ""}${rk.name}`, 18, P.accent))
       .child(v_flex().gap(3)
         .child(txt(rk.max ? "MAX RANK" : `${rk.into}/${rk.of} CONTRACTS`, 11, P.dim, 700))
         .child(h_flex().gap(2).children(Array.from({ length: 4 }, (_, i) => div().w(16).h(4).bg(i < Math.ceil((rk.into * 4) / rk.of) ? P.accent : P.line)))));

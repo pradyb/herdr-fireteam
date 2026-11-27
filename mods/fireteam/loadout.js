@@ -3,10 +3,10 @@
 // everywhere: the weapon silhouette and name, the camo colour on rows, headers and the card.
 // Every perk changes how the HUD behaves; see its description and where kit.js hasPerk / focusedHas is read.
 
-import { levelOf, CAMO_LEVEL } from "./glory.js";
+import { levelOf, CAMO_LEVEL, CARDS, freshLife } from "./glory.js";
 import { agentsNow, S } from "./kit.js";
 import { agents, props, closeOverlay } from "herdr";
-import { pal, txt, head, icon, section, panel, div, h_flex, v_flex, opOf, colorOf, STATUS, sessionOf, WEAPONS, CAMOS, PERKS, setLoadout, clip, stop } from "./kit.js";
+import { pal, txt, head, icon, section, panel, div, h_flex, v_flex, opOf, colorOf, STATUS, sessionOf, WEAPONS, CAMOS, PERKS, prestigeNow, setLoadout, clip, stop } from "./kit.js";
 
 export default class Loadout {
   render(_cx) {
@@ -16,6 +16,7 @@ export default class Loadout {
     const o = opOf(a.address, a.program), c = colorOf(P, a.status), tint = o.camo ?? P.text;
     const mast = S("fireteam.mastery") ?? {}, lvOf = (g) => levelOf(mast[g] ?? 0), me = lvOf(o.gun);
     const pick = (patch) => () => setLoadout(addr, patch);
+    const life = { ...freshLife(), ...(S("fireteam.life") ?? {}) }, prestige = prestigeNow();
     const tile = (id, on, kids, fn, w = 118) => v_flex().id(id).w(w).flex_none().h(64).items_center().justify_center().gap(4).cursor_pointer()
       .border_1().border_color(on ? P.accent : P.line).bg(on ? P.panel2 : "#00000000").hover((s) => s.bg(P.panel2)).on_mouse_down("left", stop).on_click(fn).children(kids);
 
@@ -51,6 +52,13 @@ export default class Loadout {
             .tooltip(lock ? `Locked: needs ${o.gun} level ${CAMO_LEVEL[k.n]}` : k.n)
             .child(div().w(54).h(34).bg(k.c ?? P.line).border_1().border_color(k.n === o.camoName ? "#ffffff" : P.line))
             .child(txt(lock ? `LVL ${CAMO_LEVEL[k.n]}` : k.n, 10, k.n === o.camoName ? P.text : P.dim, 800));
+        }))))
+      .child(v_flex().gap(8).child(head("Calling card", 13, P.accent))
+        .child(h_flex().flex_wrap().gap(8).children(CARDS.map((c) => {
+          const on = c.ok(life, prestige), cur = o.card === c.k;
+          return v_flex().id(`card-${c.k}`).w(150).flex_none().gap(2).p(8).border_1().border_color(cur ? P.accent : P.line).bg(cur ? P.panel2 : "#00000000").opacity(on ? 1 : 0.4)
+            .on_mouse_down("left", stop).when(on, (e) => e.cursor_pointer().hover((x) => x.bg(P.panel2)).on_click(pick({ card: cur ? null : c.k })))
+            .child(txt(on ? c.n : "LOCKED", 12, cur ? P.accent : P.text, 800)).child(txt(c.d, 10, P.dim, 700));
         }))))
       .child(v_flex().gap(8).child(head("Perks", 13, P.accent))
         .child(h_flex().gap(10).children(PERKS.map((slot, i) => v_flex().flex_1().min_w(0).gap(6)

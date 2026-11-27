@@ -3,13 +3,15 @@
 // Click outside (or Esc) to close.
 
 import { setShared } from "herdr";
-import { agentsNow, S, statsOf, rankNow } from "./kit.js";
+import { agentsNow, S, statsOf, rankNow, prestigeNow, sfx } from "./kit.js";
+import { freshLife } from "./glory.js";
 import { pal, txt, head, section, panel, div, h_flex, v_flex, opOf, colorOf, stop } from "./kit.js";
 
 const COLS = [["OPERATOR", 0], ["DAMAGE", 90], ["ACCURACY", 100], ["RECON", 90], ["DRONES", 90]];
 
 export default class Debrief {
   arm = false; // RESET RANK needs a second click
+  armP = false; // so does PRESTIGE
   render(cx) {
     const P = pal(), kills = Number(S("fireteam.kills") ?? 0), rk = rankNow();
     const rows = agentsNow().map((a) => {
@@ -19,6 +21,8 @@ export default class Debrief {
     const mvp = rows[0] && rows[0].st.hits > 0 ? rows[0].a.address : null;
     const tile = (label, val, sub) => v_flex().flex_1().gap(2).p(12).bg(P.panel2).border_1().border_color(P.line)
       .child(txt(label, 10, P.dim, 800)).child(head(val, 24, P.accent)).child(txt(sub, 10, P.dim, 700));
+    const life = { ...freshLife(), ...(S("fireteam.life") ?? {}) }, stars = prestigeNow();
+    const small = (label, v) => v_flex().flex_1().gap(1).px(10).py(6).bg(P.panel2).border_1().border_color(P.line).child(txt(label, 9, P.dim, 800)).child(head(String(v), 16, P.text));
     const cell = (s, w, c = P.text) => (w ? txt(s, 13, c, 800).w(w).flex_none() : txt(s, 13, c, 800).flex_1().min_w(0).truncate());
     const row = ({ a, o, st, acc }) => h_flex().gap(10).px(12).h(38).items_center().border_b_1().border_color(P.line)
       .child(cell(`[${o.unit}] ${o.call}${a.address === mvp ? "  ★ MVP" : ""}  ·  ${o.role}`, 0, a.address === mvp ? P.accent : colorOf(P, a.status)))
@@ -27,13 +31,26 @@ export default class Debrief {
       v_flex().flex_1().min_h(0).gap(12).p(14)
         .child(h_flex().gap(10)
           .child(tile("CONTRACTS CLEARED", String(kills), "FINISHED AGENT RUNS"))
-          .child(tile("RANK", rk.name, rk.max ? "MAX RANK" : `${rk.into}/${rk.of} CONTRACTS`))
+          .child(tile("RANK", `${stars ? `★${stars} ` : ""}${rk.name}`, rk.max ? "MAX RANK" : `${rk.into}/${rk.of} CONTRACTS`))
           .child(tile("SCORESTREAK POINTS", String(Number(S("fireteam.streak") ?? 0)), "UAV 3 · CRUISE 5 · GUNSHIP 7 · JUGG 9"))
           .child(tile("OPERATORS", String(rows.length), `${rows.filter((r) => r.a.status === "working").length} ENGAGED`)))
+        .child(h_flex().gap(10)
+          .child(small("LIFETIME CONTRACTS", life.clears)).child(small("COMMITS", life.commits)).child(small("PUSHES", life.pushes)).child(small("TEST RUNS", life.tests))
+          .child(small("MEDALS", life.medals)).child(small("FLAWLESS", life.flawless)).child(small("BEST FLAWLESS RUN", life.bestRun)).child(small("DRONES", life.drones)))
         .child(h_flex().gap(10).px(12).h(24).items_center().children(COLS.map(([l, w]) => (w ? txt(l, 10, P.dim, 800).w(w).flex_none() : txt(l, 10, P.dim, 800).flex_1()))))
         .child(div().id("debrief-body").flex_1().min_h(0).overflow_y_scrollbar().children(rows.length ? rows.map(row) : [txt("NO OPERATORS DEPLOYED", 12, P.dim, 700)]))
         .child(h_flex().gap(10).items_center()
           .child(txt("STATS COME FROM THE AGENT HOOK · ESC TO CLOSE", 10, P.dim, 700).flex_1())
+          .when(rk.max, (e) => e.child(h_flex().id("prestige").px(10).h(24).items_center().border_1().border_color(this.armP ? P.bad : P.accent).cursor_pointer().hover((x) => x.bg(P.panel2))
+            .on_mouse_down("left", stop)
+            .on_click(() => {
+              if (!this.armP) { this.armP = true; cx.notify(); return; }
+              this.armP = false; setShared("fireteam.kills", 0); setShared("fireteam.bonus", 0); setShared("fireteam.prestige", stars + 1);
+              const t = Date.now(), n = stars + 1;
+              setShared("fireteam.feed", [...(S("fireteam.feed") ?? []), { t, k: "warn", who: "COMMAND", unit: "HQ", gun: "", tgt: `PRESTIGE ${n}` }].slice(-30));
+              setShared("fireteam.pop", { t, kind: "kill", text: `PRESTIGE ${n}`, pts: 0, who: "BACK TO PVT" }); sfx("ready"); cx.notify();
+            })
+            .child(txt(this.armP ? "CLICK AGAIN: PRESTIGE, BACK TO PVT" : "PRESTIGE", 10, this.armP ? P.bad : P.accent, 800))))
           .child(h_flex().id("reset-rank").px(10).h(24).items_center().border_1().border_color(this.arm ? P.bad : P.line).cursor_pointer().hover((s) => s.bg(P.panel2))
             .on_mouse_down("left", stop)
             .on_click(() => { if (this.arm) { setShared("fireteam.kills", 0); setShared("fireteam.bonus", 0); this.arm = false; } else this.arm = true; cx.notify(); })

@@ -88,7 +88,7 @@ export function opOf(address, program) {
   const h = hash(address), role = roleOf(program), R = ROLES[role], L = S("fireteam.loadout")?.[address];
   const W = WEAPONS.find((w) => w.n === L?.gun);
   return { address, role: R.name, gun: W ? W.n : R.gun[0], gunIcon: W ? W.i : R.gun[1], camo: CAMOS.find((c) => c.n === L?.camo)?.c ?? null,
-    camoName: L?.camo ?? "STANDARD", perks: L?.perks ?? [null, null, null], tint: R.tint, call: CALLSIGNS[h % CALLSIGNS.length],
+    camoName: L?.camo ?? "STANDARD", card: L?.card ?? null, perks: L?.perks ?? [null, null, null], tint: R.tint, call: CALLSIGNS[h % CALLSIGNS.length],
     unit: UNITS[(h >>> 7) % UNITS.length], bearing: (h >>> 3) % 360, ring: 0.25 + ((h >>> 11) % 100) / 133, prog: program?.name ?? "agent" };
 }
 export const STATUS = {
@@ -117,6 +117,8 @@ export function rankOf(kills) {
   return { lv, name: RANKS[lv], into: max ? RANK_STEP : kills % RANK_STEP, of: RANK_STEP, max }; // at max rank the bar stays full
 }
 /** Rank from contracts plus challenge rewards (shared "fireteam.bonus"). */
+/** Prestige stars: finishing the climb to GEN and starting over (debrief) adds one. */
+export const prestigeNow = () => Number(S("fireteam.prestige") ?? 0);
 export const rankNow = () => rankOf(Number(S("fireteam.kills") ?? 0) + Number(S("fireteam.bonus") ?? 0));
 export const STREAKS = [
   { key: "uav", name: "UAV", need: 3, icon: "ss-uav", tip: "UAV: jump to the operator under fire" },
