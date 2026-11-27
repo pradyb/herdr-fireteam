@@ -37,8 +37,8 @@ export default class Squad {
         .child(h_flex().id(`sec-${sp.id}`).h(28).px(10).gap(8).items_center().cursor_pointer().hover((s) => s.bg(P.panel2))
           .on_click(() => run("space.select", { id: sp.id }))
           .child(div().size(7).flex_none().bg(sp.active ? P.accent : sc))
-          .child(head(`OP ${sp.index} · ${clip(sp.name, 20)}`, 13, sp.active ? P.accent : P.text).flex_1().min_w(0).truncate())
-          .when(Boolean(sp.branch), (e) => e.child(txt(`⎇ ${clip(sp.branch, 12)}`, 11, P.dim, 700).flex_none()))
+          .child(head(`${sp.index} · ${clip(sp.name, 24)}`, 13, sp.active ? P.accent : P.text).flex_1().min_w(0).truncate())
+          .when(Boolean(sp.branch), (e) => e.child(txt(`⎇ ${clip(sp.branch, 10)}`, 11, P.dim, 700).flex_none()))
           .child(txt(`${sp.tabs.length}`, 12, P.dim, 700)))
         .children(sp.tabs.filter((t) => !t.settled || t.active).map((t) => {
           const on = sp.active && t.active, c = t.status ? colorOf(P, t.status) : P.dim;
