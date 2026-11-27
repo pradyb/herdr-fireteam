@@ -2,7 +2,7 @@
 // plates) and OPERATIONS (spaces) with their CONTRACTS (tabs). Click an operator or a contract to go there.
 
 import { agentsNow, spacesNow } from "./kit.js";
-import { agents, spaces, run } from "herdr";
+import { agents, spaces, panes, props, run } from "herdr";
 import { pal, ACT, actOf, sessionOf, openLoadout, hasPerk, txt, head, icon, section, panel, plates, div, h_flex, v_flex, opOf, colorOf, STATUS, clip, stop } from "./kit.js";
 
 export default class Squad {
@@ -29,6 +29,8 @@ export default class Squad {
 
   render(_cx) {
     const P = pal(), ags = agentsNow(), sps = spacesNow();
+    const dirOf = new Map(); // tab id -> folder name of its first terminal (focused one wins)
+    if (!props()?.demo) for (const p of panes()) if (p.cwd && (p.focused || !dirOf.has(p.tab))) dirOf.set(p.tab, p.cwd.replace(/\/+$/, "").split("/").pop() || "~");
     const op = (sp) => {
       const sc = sp.status ? colorOf(P, sp.status) : P.dim;
       return v_flex().flex_none().pb(6)
@@ -36,6 +38,7 @@ export default class Squad {
           .on_click(() => run("space.select", { id: sp.id }))
           .child(div().size(7).flex_none().bg(sp.active ? P.accent : sc))
           .child(head(`OP ${sp.index} · ${clip(sp.name, 20)}`, 13, sp.active ? P.accent : P.text).flex_1().min_w(0).truncate())
+          .when(Boolean(sp.branch), (e) => e.child(txt(`⎇ ${clip(sp.branch, 12)}`, 11, P.dim, 700).flex_none()))
           .child(txt(`${sp.tabs.length}`, 12, P.dim, 700)))
         .children(sp.tabs.filter((t) => !t.settled || t.active).map((t) => {
           const on = sp.active && t.active, c = t.status ? colorOf(P, t.status) : P.dim;
@@ -43,7 +46,10 @@ export default class Squad {
             .bg(on ? P.panel2 : "#00000000").hover((s) => s.bg(P.panel2))
             .on_click(() => { if (!sp.active) run("space.select", { id: sp.id }); run("tab.select", { id: t.id }); })
             .child(div().w(4).h(4).flex_none().bg(c))
-            .child(txt(clip(t.named ? t.name : `CONTRACT ${t.index}`, 26).toUpperCase(), 12, on ? P.text : P.dim, 700).flex_1().min_w(0).truncate())
+            .child(h_flex().flex_1().min_w(0).gap(6).items_center()
+              .when(dirOf.has(t.id), (e) => e.child(txt(clip(dirOf.get(t.id), 14), 12, P.text, 700).flex_none()))
+              .child(txt(clip(t.named ? t.name : `Contract ${t.index}`, 22), 12, P.dim, 700).min_w(0).truncate()))
+            .when(t.status === "working" && t.working_since, (e) => e.child(txt(`${Math.max(1, Math.floor((Date.now() - t.working_since) / 60000))}m`, 11, P.good, 700)))
             .when(t.panes > 1, (e) => e.child(txt(`×${t.panes}`, 11, P.dim, 700)));
         }));
     };

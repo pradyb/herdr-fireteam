@@ -17,7 +17,7 @@ Everything is drawn natively from live Herdr data; the screenshot above uses inv
 |---|---|
 | **Compass** (top) | A heading scale with a diamond per operator at its own bearing, red and flashing when it is under fire. Click one to jump to it. The heading is the focused operator's. |
 | **Squad** (left) | Every agent as an operator: `[unit] callsign`, role, weapon silhouette, live action, state word, five armour plates, and its **session name**. The gear opens its loadout. |
-| **Operations** (left) | Spaces as operations, tabs as contracts. |
+| **Operations** (left) | Spaces as operations (with the git branch), tabs as contracts (folder, tab name, and minutes while working). |
 | **Radar** (right) | A blip per operator and a sweep. Click a blip to jump. |
 | **Kill feed** | A finished contract is a kill: `[unit] callsign <weapon> CONTRACT`. Also under fire, engaged, deployed, extracted, commits and pushes. |
 | **Scorestreaks** | Charged by finished contracts: UAV 3 (jump to the operator under fire), Cruise 5 (jump to a finished one), Gunship 7 (zoom the terminal), Juggernaut 9 (new terminal). |
