@@ -19,7 +19,7 @@ export default class Squad {
           .child(txt(`[${o.unit}]`, 11, P.dim, 700).flex_none())
           .child(head(o.call, 14, a.focused ? P.accent : P.text).truncate()))
         .child(actOf(a.address) && a.status === "working" ? txt(ACT[actOf(a.address)], 11, P.good, 500).truncate() : txt(`${o.role} · ${o.gun}`, 11, P.dim, 500).truncate())
-        .child(txt(sessionOf(a) ? `▸ ${clip(sessionOf(a).toUpperCase(), 26)}` : "", 11, P.text, 500).truncate()))
+        .child(txt(sessionOf(a) ? `▸ ${clip(sessionOf(a).toUpperCase(), 26)}` : "", 12, P.text, 700).truncate()))
       .child(v_flex().flex_none().items_end().gap(4)
         .child(txt(STATUS[a.status]?.word ?? "", 11, c, 800))
         .child(plates(P, a.status, 9, hasPerk(a.address, "quickfix") ? 1 : 0)))
