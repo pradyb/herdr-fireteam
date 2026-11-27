@@ -52,10 +52,10 @@ export default class Side {
       else mast = { ...mast };
       const line = (a, k, tgt) => { const o = opOf(a.address, a.program), ses = sessionOf(a); feed.push({ t: now, k, who: o.call, unit: o.unit, gun: o.gunIcon, tgt: k === "kill" || !ses ? tgt : `${tgt} · ${clip(ses.toUpperCase(), 18)}` }); dirty = true; };
       let snd = null;
-      const P = (a, kind, text, pts) => {
+      const P = (a, kind, text, pts, quiet = false) => { // quiet: popup only, no sound
         if (hasPerk(a.address, "deadsilence")) return;
         pop = { t: now, kind, text, pts: hasPerk(a.address, "overkill") ? pts * 2 : pts, who: `${opOf(a.address, a.program).call}${sessionOf(a) ? ` · ${clip(sessionOf(a).toUpperCase(), 20)}` : ""}` };
-        snd = kind === "info" ? (snd ?? "info") : kind === "dmg" ? (snd === "kill" ? snd : "dmg") : kind === "kill" ? "kill" : (snd === "kill" || snd === "dmg" ? snd : "hit");
+        if (!quiet) snd = kind === "info" ? (snd ?? "info") : kind === "dmg" ? (snd === "kill" ? snd : "dmg") : kind === "kill" ? "kill" : (snd === "kill" || snd === "dmg" ? snd : "hit");
       };
       const bump = (addr, f, n = 1) => { stats[addr] = { ...statsOf(addr), ...stats[addr] }; stats[addr][f] = (stats[addr][f] ?? 0) + n; dirty = true; };
 
@@ -92,7 +92,7 @@ export default class Side {
         if (!s || !old) continue; // first look: a baseline, not an event
         const newTask = s.tache !== old.tache, base = newTask ? 0 : old.coups ?? 0;
         if (newTask) P(a, "info", "CONTRACT ACCEPTED", 0);
-        if ((s.coups ?? 0) > base) { const n = s.coups - base; bump(a.address, "hits", n); P(a, "hit", s.outil === "Bash" ? "COMMAND RUN" : "DIRECT HIT", 10 * n);
+        if ((s.coups ?? 0) > base) { const n = s.coups - base; bump(a.address, "hits", n); P(a, "hit", s.outil === "Bash" ? "COMMAND RUN" : "DIRECT HIT", 10 * n, s.outil === "Bash"); // a command run pops up but stays silent
           const gun = opOf(a.address, a.program).gun, was = levelOf(mast[gun] ?? 0).lv; mast[gun] = (mast[gun] ?? 0) + n;
           const now2 = levelOf(mast[gun]).lv;
           if (now2 > was) { const un = unlocked(was, now2); P(a, "kill", `${gun} LEVEL ${now2}`, 0); line(a, "warn", `★ ${gun} LEVEL ${now2}${un.length ? ` · ${un.join(", ")} CAMO` : ""}`); snd = "ready"; }

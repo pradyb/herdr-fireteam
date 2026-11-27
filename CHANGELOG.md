@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.2]
+
+### Changed
+- A command run (Bash) still pops COMMAND RUN but no longer plays a sound; edits and the other events keep theirs
+
 ## [0.4.1]
 
 ### Fixed
