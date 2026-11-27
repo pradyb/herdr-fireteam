@@ -2,14 +2,14 @@
 // one row per operator with the stats the hook records. MVP = most damage (successful edits and commands).
 // Click outside (or Esc) to close.
 
-import { agentsNow, S, statsOf, rankOf } from "./kit.js";
+import { agentsNow, S, statsOf, rankNow } from "./kit.js";
 import { pal, txt, head, section, panel, div, h_flex, v_flex, opOf, colorOf, stop } from "./kit.js";
 
 const COLS = [["OPERATOR", 0], ["DAMAGE", 90], ["ACCURACY", 100], ["RECON", 90], ["DRONES", 90]];
 
 export default class Debrief {
   render(_cx) {
-    const P = pal(), kills = Number(S("fireteam.kills") ?? 0), rk = rankOf(kills);
+    const P = pal(), kills = Number(S("fireteam.kills") ?? 0), rk = rankNow();
     const rows = agentsNow().map((a) => {
       const st = statsOf(a.address), shots = st.hits + st.errs;
       return { a, o: opOf(a.address, a.program), st, acc: shots ? Math.round((100 * st.hits) / shots) : null };

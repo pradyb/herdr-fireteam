@@ -114,6 +114,8 @@ export function rankOf(kills) {
   const lv = Math.min(RANKS.length - 1, Math.floor(kills / 4));
   return { lv, name: RANKS[lv], into: kills % 4, of: 4, max: lv === RANKS.length - 1 };
 }
+/** Rank from contracts plus challenge rewards (shared "fireteam.bonus"). */
+export const rankNow = () => rankOf(Number(S("fireteam.kills") ?? 0) + Number(S("fireteam.bonus") ?? 0));
 export const STREAKS = [
   { key: "uav", name: "UAV", need: 3, icon: "ss-uav", tip: "UAV: jump to the operator under fire" },
   { key: "cruise", name: "CRUISE", need: 5, icon: "ss-cruise", tip: "Cruise Missile: jump to a finished contract" },

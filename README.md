@@ -25,7 +25,9 @@ Everything is drawn natively from live Herdr data; the screenshot above uses inv
 | **XP popup + sound** | A banner over the terminal for DIRECT HIT, DAMAGE TAKEN, CONTRACT ACCEPTED/CLEAR, RANGE CLEAR (tests), INTEL SECURED (commit), EXFIL CONFIRMED (push), DRONE DEPLOYED (subagent). Nine synthesised sounds, including a stinger for each scorestreak you call in; `SFX ON/OFF` in the bottom bar. |
 | **Loadout** | The gear on a row, LOADOUT on the card, or `ctrl-shift-o`: 9 weapons (assault rifle, AK and bullpup have their own silhouettes), 8 camos, 3 perk slots. Saved per terminal. |
 | **Operations map** | `ctrl-shift-m` or the MAP button: operations as grid zones, contracts as pins, operators standing on them. Click to jump. |
-| **Rank** | PVT to GEN, one rank per 4 finished contracts. |
+| **Medals** | Bonus banners on a finished contract: DOUBLE / TRIPLE CLEAR (several within a minute), FLAWLESS (no tool failures), BOSS DOWN (3 or more failures), FIRST BLOOD (first of the day). Also in the kill feed. |
+| **Challenges** | Three a day, the same all day, reset at midnight: always "clear 5 contracts" plus two of tests, pushes, commits, flawless clears, medals, drones. Each is worth 50 XP of rank. |
+| **Rank** | PVT to GEN, one rank per 4 finished contracts (a challenge counts as two). |
 | **Debrief** | `ctrl-shift-d` or the DEBRIEF button: contracts cleared, rank, streak points, and per-operator damage, accuracy, recon and drones with an MVP. |
 | **Camo packs** | Click a swatch in the bottom bar: MODERN, NVG, ARCTIC, ZOMBIES, HAZARD. Matching terminal themes (`Fireteam`, `Fireteam-NVG`, …) are in the settings theme picker. |
 
@@ -44,7 +46,8 @@ Marksman, shells Sentry, anything else Operator. Callsign and unit tag come from
 - **Squad icon:** the operator's weapon. Its colour is the camo if one is set, otherwise the state colour.
 - **Kill feed line** `callsign <weapon> target`: a finished contract. The red target is the tab name.
 - **Scorestreak tile pulsing:** it has enough charge. Click it to spend the cost and use it. All operators share one pool of charge.
-- **Rank and XP** (top right): each finished contract is +25 XP and four make a rank, so `XP 25/100` is one contract in. The same count drives the kill total.
+- **Rank and XP** (top right): each finished contract is +25 XP and four make a rank, so `XP 25/100` is one contract in. A completed challenge adds 50 XP. The kill total counts contracts only.
+- **Medals and challenges:** FLAWLESS, BOSS DOWN and the test, push, commit and drone challenges need the agent hook; without it, only clears, double and triple clears, first blood and the clear challenge work.
 - **Clock** (`2315Z`): your local time, written in a military style. It is not UTC.
 
 ## Install

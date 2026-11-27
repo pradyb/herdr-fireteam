@@ -8,7 +8,8 @@
 
 import { S, agentsNow } from "./kit.js";
 import { agents, props, run, shared, setShared, home, readTextFile, nextCommand, openOverlay, setWindowTitle } from "herdr";
-import { pal, txt, head, icon, section, panel, div, h_flex, v_flex, opOf, colorOf, STREAKS, ACT, statsOf, stop, clip, pad2, rankOf, hasPerk, focusedHas, needOf, sessionOf, sfx, openLoadout } from "./kit.js";
+import { dayKey, freshDay, todays, progress, newlyDone, medalsFor, DAILY_REWARD } from "./glory.js";
+import { pal, txt, head, icon, section, panel, div, h_flex, v_flex, opOf, colorOf, STREAKS, ACT, statsOf, stop, clip, pad2, rankNow, hasPerk, focusedHas, needOf, sessionOf, sfx, openLoadout } from "./kit.js";
 
 const R = 78; // radar radius
 const DIR = () => `${home()}/.local/state/fireteam`;
@@ -23,7 +24,7 @@ export function openDebrief() {
 
 export default class Side {
   init(_p, cx) {
-    this.prev = null; this.seen = new Map(); this.busy = false;
+    this.prev = null; this.seen = new Map(); this.busy = false; this.clears = [];
     if (props()?.demo) return; // demo: static data, never write the person's state
     cx.timer.every(1200, (cx) => this.poll(cx));
     this.poll(cx);
@@ -43,6 +44,9 @@ export default class Side {
       let feed = [...(S("fireteam.feed") ?? [])], kills = Number(S("fireteam.kills") ?? 0), streak = Number(S("fireteam.streak") ?? 0);
       const acts = {}, stats = { ...(S("fireteam.stats") ?? {}) };
       let dirty = false, pop = null;
+      let day = S("fireteam.day"), bonus = Number(S("fireteam.bonus") ?? 0);
+      day = day && day.d === dayKey() ? { ...day, done: [...day.done] } : freshDay(dayKey());
+      const tick = (k, n = 1) => { day[k] = (day[k] ?? 0) + n; };
       const line = (a, k, tgt) => { const o = opOf(a.address, a.program), ses = sessionOf(a); feed.push({ t: now, k, who: o.call, unit: o.unit, gun: o.gunIcon, tgt: k === "kill" || !ses ? tgt : `${tgt} · ${clip(ses.toUpperCase(), 18)}` }); dirty = true; };
       let snd = null;
       const P = (a, kind, text, pts) => {
@@ -59,7 +63,14 @@ export default class Side {
           const p = this.prev.get(a.address), tab = (a.tab_name || a.title || "contract").toUpperCase();
           if (!p) line(a, "info", "DEPLOYED");
           else if (p.status !== a.status) {
-            if (p.status === "working" && (a.status === "done" || a.status === "idle")) { line(a, "kill", clip(tab, 22)); kills++; streak = Math.min(20, streak + (hasPerk(a.address, "scavenger") ? 2 : 1)); P(a, "kill", "CONTRACT CLEAR", 100); }
+            if (p.status === "working" && (a.status === "done" || a.status === "idle")) {
+              line(a, "kill", clip(tab, 22)); kills++; streak = Math.min(20, streak + (hasPerk(a.address, "scavenger") ? 2 : 1));
+              const hs = this.seen.get(a.address), medals = medalsFor({ prior: this.clears, now, errTache: hs?.tache ? (hs.errTache ?? 0) : null, worked: (hs?.coups ?? 0) > 0, firstOfDay: day.clears === 0 });
+              this.clears = [...this.clears.filter((t) => now - t <= 60000), now];
+              tick("clears"); tick("medals", medals.length); if (medals.includes("FLAWLESS")) tick("flawless");
+              for (const m of medals) line(a, "warn", `★ ${m}`);
+              P(a, "kill", medals.length ? medals.slice(0, 2).join(" · ") : "CONTRACT CLEAR", 100);
+            }
             else if (a.status === "blocked") { line(a, "warn", "NEEDS BACKUP"); P(a, "dmg", "NEEDS BACKUP", 0); }
             else if (a.status === "working") line(a, "info", "ENGAGED");
           }
@@ -81,12 +92,22 @@ export default class Side {
         if ((s.coups ?? 0) > base) { const n = s.coups - base; bump(a.address, "hits", n); P(a, "hit", s.outil === "Bash" ? "COMMAND RUN" : "DIRECT HIT", 10 * n); }
         if ((s.errT ?? 0) > (old.errT ?? 0) && !hasPerk(a.address, "coldblooded")) { bump(a.address, "errs"); P(a, "dmg", "DAMAGE TAKEN", 0); } // COLD-BLOODED shrugs it off
         if (old.act === "medite" && s.act !== "medite" && hasPerk(a.address, "fasthands")) P(a, "kill", "RELOADED", 25); // FAST HANDS
+        if ((s.essai?.t ?? 0) > (old.essai?.t ?? 0) && s.essai.ok) tick("tests");
         if ((s.essai?.t ?? 0) > (old.essai?.t ?? 0) && (s.essai.ok || !hasPerk(a.address, "coldblooded"))) P(a, s.essai.ok ? "kill" : "dmg", s.essai.ok ? "RANGE CLEAR" : "TARGETS MISSED", s.essai.ok ? 50 : 0);
-        if ((s.commitT ?? 0) > (old.commitT ?? 0)) { P(a, "kill", "INTEL SECURED", 50); line(a, "info", "COMMIT LOCKED IN"); }
-        if ((s.pushT ?? 0) > (old.pushT ?? 0)) { P(a, "kill", "EXFIL CONFIRMED", 75); line(a, "info", "PUSHED: EXTRACTION"); }
-        if ((s.subs ?? 0) > (old.subs ?? 0)) { bump(a.address, "subs"); P(a, "info", "DRONE DEPLOYED", 25); }
+        if ((s.commitT ?? 0) > (old.commitT ?? 0)) { tick("commits"); P(a, "kill", "INTEL SECURED", 50); line(a, "info", "COMMIT LOCKED IN"); }
+        if ((s.pushT ?? 0) > (old.pushT ?? 0)) { tick("pushes"); P(a, "kill", "EXFIL CONFIRMED", 75); line(a, "info", "PUSHED: EXTRACTION"); }
+        if ((s.subs ?? 0) > (old.subs ?? 0)) { tick("drones"); bump(a.address, "subs"); P(a, "info", "DRONE DEPLOYED", 25); }
         if (s.act === "eclaire" && old.act !== "eclaire") bump(a.address, "reads");
       }
+
+      // daily challenges reached this poll: reward, feed line, popup
+      for (const ch of newlyDone(day)) {
+        day.done.push(ch.k); bonus += DAILY_REWARD; dirty = true; snd = "ready";
+        feed.push({ t: now, k: "warn", who: "COMMAND", unit: "HQ", gun: "", tgt: `CHALLENGE DONE · ${ch.n}` });
+        pop = { t: now, kind: "kill", text: "CHALLENGE COMPLETE", pts: DAILY_REWARD * 25, who: ch.n };
+      }
+      if (JSON.stringify(day) !== JSON.stringify(S("fireteam.day"))) setShared("fireteam.day", day);
+      if (bonus !== Number(S("fireteam.bonus") ?? 0)) setShared("fireteam.bonus", bonus);
 
       // 3. publish only what changed
       if (JSON.stringify(acts) !== JSON.stringify(S("fireteam.act") ?? {})) { setShared("fireteam.act", acts); dirty = true; }
@@ -134,6 +155,17 @@ export default class Side {
         .when(e.k === "kill" && e.gun, (el) => el.child(icon(e.gun, 26, 9, P.text)))
         .child(txt(e.tgt, 12, e.k === "kill" ? P.bad : col[e.k], 800).min_w(0).truncate());
     }) : [txt("QUIET ON THE NET", 12, P.dim, 700)]);
+  }
+
+  /** Today's three challenges, a segmented bar each. Progress is counted by poll(). */
+  challenges(P) {
+    const key = dayKey(), saved = S("fireteam.day"), day = saved && saved.d === key ? saved : freshDay(key), list = todays(key);
+    return panel(P, section(P, "Challenges", `${list.filter((c) => day.done.includes(c.k)).length}/3`), v_flex().p(10).gap(8).children(list.map((ch) => {
+      const done = day.done.includes(ch.k), have = progress(day, ch);
+      return v_flex().id(`ch-${ch.k}`).gap(3).tooltip(`Daily challenge: +${DAILY_REWARD * 25} XP when done. Resets at midnight.`)
+        .child(h_flex().gap(8).items_center().child(txt(ch.n, 11, done ? P.good : P.text, 800).flex_1().min_w(0).truncate()).child(txt(done ? "DONE" : `${have}/${ch.need}`, 11, done ? P.good : P.dim, 800)))
+        .child(h_flex().gap(2).children(Array.from({ length: ch.need }, (_, i) => div().flex_1().h(3).bg(i < have ? (done ? P.good : P.accent) : P.line))));
+    }))).flex_none();
   }
 
   streaks(P, ags) {
@@ -193,7 +225,8 @@ export default class Side {
     return v_flex().id("side").size_full().gap(8).p(8).bg(P.bg)
       .child(panel(P, section(P, "Radar", `${pad2(eng)}/${pad2(ags.length)} ENGAGED`), div().flex().justify_center().py(8).child(this.radar(P, ags))).flex_none())
       .child(panel(P, section(P, "Kill feed"), this.feed(P)).flex_1().min_h(0))
+      .child(this.challenges(P))
       .child(panel(P, section(P, "Scorestreaks", `${Number(S("fireteam.streak") ?? 0)} PTS`), this.streaks(P, ags)).flex_none())
-      .child(panel(P, section(P, "Operator", rankOf(Number(S("fireteam.kills") ?? 0)).name), this.card(P, cur)).flex_none());
+      .child(panel(P, section(P, "Operator", rankNow().name), this.card(P, cur)).flex_none());
   }
 }

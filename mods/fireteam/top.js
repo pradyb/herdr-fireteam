@@ -5,7 +5,7 @@
 
 import { S, agentsNow, spacesNow } from "./kit.js";
 import { agents, spaces, focused, run } from "herdr";
-import { pal, hash, sessionOf, hasPerk, focusedHas, txt, head, icon, div, h_flex, v_flex, opOf, colorOf, rankOf, zulu, stop, clip, pad2 } from "./kit.js";
+import { pal, hash, sessionOf, hasPerk, focusedHas, txt, head, icon, div, h_flex, v_flex, opOf, colorOf, rankNow, zulu, stop, clip, pad2 } from "./kit.js";
 import { shared } from "herdr";
 
 const W = 600, SPAN = 90, PPD = W / 2 / SPAN; // px per degree
@@ -42,7 +42,7 @@ export default class Top {
     const P = pal(), ags = agentsNow(), sps = spacesNow();
     const f = focused(), cur = ags.find((a) => a.address === f?.terminal) ?? ags.find((a) => a.focused);
     const bearing = cur ? opOf(cur.address, cur.program).bearing : 0;
-    const sp = sps.find((s) => s.active), rk = rankOf(Number(S("fireteam.kills") ?? 0));
+    const sp = sps.find((s) => s.active), rk = rankNow();
     const rank = h_flex().flex_none().gap(8).items_center()
       .child(head(rk.name, 18, P.accent))
       .child(v_flex().gap(3)
