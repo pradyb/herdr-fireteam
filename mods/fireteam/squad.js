@@ -30,7 +30,8 @@ export default class Squad {
   render(_cx) {
     const P = pal(), ags = agentsNow(), sps = spacesNow();
     const dirOf = new Map(); // tab id -> folder name of its first terminal (focused one wins)
-    if (!props()?.demo) for (const p of panes()) if (p.cwd && (p.focused || !dirOf.has(p.tab))) dirOf.set(p.tab, p.cwd.replace(/\/+$/, "").split("/").pop() || "~");
+    if (props()?.demo) { for (const sp of sps) for (const t of sp.tabs) if (t.dir) dirOf.set(t.id, t.dir); }
+    else for (const p of panes()) if (p.cwd && (p.focused || !dirOf.has(p.tab))) dirOf.set(p.tab, p.cwd.replace(/\/+$/, "").split("/").pop() || "~");
     const op = (sp) => {
       const sc = sp.status ? colorOf(P, sp.status) : P.dim;
       return v_flex().flex_none().pb(6)

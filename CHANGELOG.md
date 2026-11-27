@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.6.0]
+
 ### Added
 - Prestige: at GEN, `PRESTIGE` in the debrief (two clicks) goes back to PVT and adds a star shown next to the rank
 - Lifetime record in the debrief: contracts, commits, pushes, test runs, medals, flawless clears, best flawless run, drones (counted from this version on; contracts start from your current total)
