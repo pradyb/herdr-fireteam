@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.3.0]
+
 ### Added
 - Medals: DOUBLE and TRIPLE CLEAR, FLAWLESS, BOSS DOWN and FIRST BLOOD on a finished contract, in the popup and the kill feed
 - Daily challenges: three a day (always "clear 5 contracts"), a segmented bar each in a new right-column panel, 50 XP of rank when done
