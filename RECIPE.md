@@ -50,7 +50,7 @@ Status colours in MODERN: working `#63d06a`, blocked `#ff4a3d`, done `#f2c230`, 
   (+10 XP popup, hit tick), `errT` increases are damage, `tache` increases `CONTRACT ACCEPTED`, `essai` a range test,
   `commitT` `INTEL SECURED` +50, `pushT` `EXFIL CONFIRMED` +75, `subs` increases `DRONE DEPLOYED` +25, `act` gives the
   live action (RECON, FIRING, EXECUTING, RANGE TEST, COMMS UPLINK, RELOADING, ANALYSING). First look is a baseline, not an event.
-- **Rank**: one rank per 4 kills. **Streaks**: click a ready tile: UAV focuses the blocked agent, Cruise a finished one,
+- **Rank**: one rank per 25 kills. **Streaks**: click a ready tile: UAV focuses the blocked agent, Cruise a finished one,
   Gunship runs `pane.zoom`, Juggernaut `tab.new`.
 - **Loadout** (per terminal, saved in shared `fireteam.loadout`): 9 weapons, 8 camos (a colour that tints the weapon
   silhouette and adds a row stripe), three perk slots. Ghost: no radar blip, 12% compass diamond. Cold-Blooded: failed

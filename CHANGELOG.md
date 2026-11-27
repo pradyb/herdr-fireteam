@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.5.0]
+
+### Changed
+- Ranks are slower: 25 finished contracts per rank instead of 4 (GEN at 225); the rank text reads `n/25 CONTRACTS`
+- At max rank the rank bar stays full
+
+### Added
+- `RESET RANK` in the debrief (two clicks) sets the rank back to PVT; streaks, weapon levels and loadouts are kept
+
 ## [0.4.3]
 
 ### Changed
