@@ -132,7 +132,7 @@ export const statsOf = (addr) => ({ hits: 0, errs: 0, reads: 0, subs: 0, ...(S("
 // ------------------------------------------------------------------ loadout: weapon, camo, perks (chosen in loadout.js)
 export const WEAPONS = [
   { n: "M4A1", i: "gun-ar", c: "ASSAULT" }, { n: "AK-47", i: "gun-ak", c: "ASSAULT" }, { n: "FR 556", i: "gun-bullpup", c: "ASSAULT" },
-  { n: "MP7", i: "gun-smg", c: "SMG" }, { n: "SA87", i: "gun-lmg", c: "LMG" }, { n: "DRAGUNOV", i: "gun-sniper", c: "MARKSMAN" },
+  { n: "MP7", i: "gun-smg", c: "SMG" }, { n: "SA87", i: "gun-lmg", c: "LMG" }, { n: "DRAGUNOV", i: "gun-sniper", c: "SNIPER" },
   { n: "MODEL 680", i: "gun-shotgun", c: "SHOTGUN" }, { n: "1911", i: "gun-pistol", c: "PISTOL" }, { n: "RPG-7", i: "gun-launcher", c: "LAUNCHER" },
 ];
 export const CAMOS = [

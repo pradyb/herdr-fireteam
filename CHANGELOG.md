@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+- Loadout: weapons are grouped by category (assault, SMG, LMG, sniper, shotgun, pistol, launcher); the Dragunov is now listed as a sniper
+
 ## [0.2.0]
 
 ### Added

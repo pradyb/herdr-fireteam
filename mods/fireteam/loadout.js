@@ -14,7 +14,7 @@ export default class Loadout {
     if (!a) return div().size_full().bg(P.panel).child(txt("OPERATOR NOT FOUND", 13, P.dim, 700).p(16));
     const o = opOf(a.address, a.program), c = colorOf(P, a.status), tint = o.camo ?? P.text;
     const pick = (patch) => () => setLoadout(addr, patch);
-    const tile = (id, on, kids, fn, w = 118) => v_flex().id(id).w(w).flex_none().h(66).items_center().justify_center().gap(4).cursor_pointer()
+    const tile = (id, on, kids, fn, w = 118) => v_flex().id(id).w(w).flex_none().h(56).items_center().justify_center().gap(4).cursor_pointer()
       .border_1().border_color(on ? P.accent : P.line).bg(on ? P.panel2 : "#00000000").hover((s) => s.bg(P.panel2)).on_mouse_down("left", stop).on_click(fn).children(kids);
 
     const left = v_flex().w(300).flex_none().gap(10).p(14).border_r_1().border_color(P.line)
@@ -35,7 +35,10 @@ export default class Loadout {
 
     const right = v_flex().id("loadout-body").flex_1().min_w(0).min_h(0).overflow_y_scrollbar().gap(14).p(14)
       .child(v_flex().gap(8).child(head("Weapon", 13, P.accent))
-        .child(h_flex().flex_wrap().gap(8).children(WEAPONS.map((w) => tile(`w-${w.n}`, w.n === o.gun, [icon(w.i, 64, 22, w.n === o.gun ? tint : P.dim), txt(w.n, 12, P.text, 800), txt(w.c, 9, P.dim, 800)], pick({ gun: w.n }))))))
+        .children(["ASSAULT", "SMG", "LMG", "SNIPER", "SHOTGUN", "PISTOL", "LAUNCHER"].map((cat) => h_flex().gap(8).items_center()
+          .child(txt(cat, 10, P.dim, 800).w(70).flex_none())
+          .children(WEAPONS.filter((w) => w.c === cat).map((w) => tile(`w-${w.n}`, w.n === o.gun,
+            [icon(w.i, 64, 22, w.n === o.gun ? tint : P.dim), txt(w.n, 12, P.text, 800)], pick({ gun: w.n })))))))
       .child(v_flex().gap(8).child(head("Camo", 13, P.accent))
         .child(h_flex().flex_wrap().gap(8).children(CAMOS.map((k) => v_flex().id(`c-${k.n}`).w(86).flex_none().items_center().gap(5).cursor_pointer().on_mouse_down("left", stop).on_click(pick({ camo: k.n }))
           .child(div().w(54).h(34).bg(k.c ?? P.line).border_1().border_color(k.n === o.camoName ? "#ffffff" : P.line))
