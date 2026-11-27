@@ -1,6 +1,6 @@
 // Self-check for mods/fireteam/glory.js. Run: node tools/test_glory.mjs
 import assert from "node:assert/strict";
-import { LEVELS, CAMO_LEVEL, levelOf, unlocked, todays, freshDay, newlyDone, progress, medalsFor, dayKey, POOL } from "../mods/fireteam/glory.js";
+import { LEVELS, CAMO_LEVEL, levelOf, unlocked, todays, freshDay, newlyDone, progress, medalsFor, dayKey, POOL, weekKey, freshWeek, weeklies, reached, WEEK_POOL, fmtDur, freshLife, noteMedals, CARDS, cardOf } from "../mods/fireteam/glory.js";
 
 const t = todays("2026-11-27");
 assert.equal(t.length, 3); assert.equal(t[0].k, "clears"); assert.equal(new Set(t.map((c) => c.k)).size, 3);
@@ -34,4 +34,28 @@ assert.deepEqual(unlocked(1, 2), ["DESERT"]); assert.deepEqual(unlocked(3, 6), [
 assert.deepEqual(unlocked(1, 10), ["DESERT", "ARCTIC", "DIGITAL", "TIGER", "GOLD", "DARK MATTER"]);
 assert.deepEqual(unlocked(5, 5), []);
 assert.equal(CAMO_LEVEL.STANDARD, 1);
+
+// weekly: Monday-based keys, 2 challenges (clears first), same all week, payout once
+assert.equal(weekKey(new Date(2026, 10, 27)), "2026-11-23"); // Friday -> Monday
+assert.equal(weekKey(new Date(2026, 10, 23)), "2026-11-23"); // Monday
+assert.equal(weekKey(new Date(2026, 10, 29)), "2026-11-23"); // Sunday
+assert.equal(weekKey(new Date(2026, 11, 1)), "2026-11-30");
+const w = weeklies("2026-11-23"); assert.equal(w.length, 2); assert.equal(w[0].k, "clears"); assert.notEqual(w[1].k, "clears");
+assert.deepEqual(weeklies("2026-11-23"), w);
+const wk = freshWeek("2026-11-23"); assert.deepEqual(reached(wk, w), []);
+wk.clears = 25; assert.deepEqual(reached(wk, w).map((c) => c.k), ["clears"]);
+wk.done.push("clears"); assert.deepEqual(reached(wk, w), []);
+assert.ok(WEEK_POOL.every((c) => c.need > (POOL.find((p) => p.k === c.k)?.need ?? 0))); // weekly is harder than daily
+
+// clear time
+assert.equal(fmtDur(400), "1s"); assert.equal(fmtDur(45000), "45s"); assert.equal(fmtDur(12 * 60000), "12m");
+assert.equal(fmtDur(65 * 60000), "1h05m"); assert.equal(fmtDur(120 * 60000), "2h00m");
+
+// lifetime and cards
+const life = freshLife(7); assert.equal(life.clears, 7);
+noteMedals(life, ["FLAWLESS", "FIRST BLOOD"]); noteMedals(life, ["FLAWLESS"]); assert.equal(life.run, 2); assert.equal(life.m.FLAWLESS, 2);
+noteMedals(life, []); assert.equal(life.run, 0); assert.equal(life.bestRun, 2);
+assert.ok(cardOf("rookie", life, 0)); assert.equal(cardOf("ace", life, 0), null); assert.equal(cardOf("nope", life, 0), null);
+life.clears = 50; assert.ok(cardOf("ace", life, 0)); assert.equal(cardOf("prestige", life, 0), null); assert.ok(cardOf("prestige", life, 1));
+assert.equal(new Set(CARDS.map((c) => c.k)).size, CARDS.length);
 console.log("glory ok");

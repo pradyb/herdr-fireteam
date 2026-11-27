@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.6.0]
+
+### Added
+- Prestige: at GEN, `PRESTIGE` in the debrief (two clicks) goes back to PVT and adds a star shown next to the rank
+- Lifetime record in the debrief: contracts, commits, pushes, test runs, medals, flawless clears, best flawless run, drones (counted from this version on; contracts start from your current total)
+- Clear time: the kill feed line and popup show how long a contract took, like `12m`
+- Calling cards: 11 titles unlocked by the lifetime record and prestige; pick one per operator in the loadout, shown on the operator card
+- Weekly challenges: two bigger goals that reset on Monday, 150 XP each, in the Challenges panel
+
 ## [0.5.2]
 
 ### Fixed

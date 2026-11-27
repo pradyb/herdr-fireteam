@@ -1,6 +1,8 @@
 // Demo data for screenshots (props.demo on a block): invented agents, spaces, feed and stats, so a
 // preview never shows anyone's projects. Used by tools/preview.sh; nothing here is read in normal use.
 
+import { dayKey, weekKey, freshDay, freshWeek, freshLife } from "./glory.js";
+
 const now = Date.now();
 const prog = (key, name) => ({ key, name, icon: null, tint: false, tile: null, color: null, shell: false, agent: true });
 const ag = (n, status, key, name, title, tab, focused = false) => ({
@@ -25,15 +27,19 @@ export const DEMO = {
     space(4, 4, "infra", "main", [tab(5, "review", "idle")]),
   ],
   shared: {
+    "fireteam.prestige": 1, "fireteam.bonus": 2,
+    "fireteam.day": { ...freshDay(dayKey()), clears: 3, tests: 2, pushes: 1, commits: 2, flawless: 1, medals: 2, drones: 1 },
+    "fireteam.week": { ...freshWeek(weekKey()), clears: 14, tests: 6, pushes: 2, commits: 5, flawless: 4, medals: 6, drones: 3 },
+    "fireteam.life": { ...freshLife(52), commits: 31, pushes: 12, tests: 40, medals: 22, flawless: 15, bestRun: 6, drones: 9 },
     "fireteam.mastery": { "M4A1": 130, "MP7": 42, "SA87": 12, "AK-47": 60 }, "fireteam.kills": 9, "fireteam.streak": 5,
     "fireteam.act": { d1: { act: "code", tool: "Edit" }, d4: { act: "eclaire", tool: "Grep" } },
     "fireteam.stats": { d1: { hits: 42, errs: 3, reads: 18, subs: 2 }, d4: { hits: 11, errs: 1, reads: 30, subs: 0 } },
-    "fireteam.loadout": { d1: { gun: "M4A1", camo: "WOODLAND", perks: ["ghost", "scavenger", "hardline"] }, d2: { gun: "MP7", camo: "GOLD", perks: ["quickfix", "overkill", "tracker"] }, d3: { gun: "SA87", camo: "ARCTIC", perks: [null, null, null] } },
+    "fireteam.loadout": { d1: { gun: "M4A1", camo: "WOODLAND", perks: ["ghost", "scavenger", "hardline"], card: "ace" }, d2: { gun: "MP7", camo: "GOLD", perks: ["quickfix", "overkill", "tracker"] }, d3: { gun: "SA87", camo: "ARCTIC", perks: [null, null, null] } },
     "fireteam.feed": [
       { t: now - 240e3, k: "info", who: "Nomad", unit: "RG", gun: "", tgt: "DEPLOYED · PROFILE THE PARSER" },
       { t: now - 170e3, k: "kill", who: "Specter", unit: "SC", gun: "gun-sniper", tgt: "DOCS" },
       { t: now - 120e3, k: "warn", who: "Havoc", unit: "SC", gun: "", tgt: "NEEDS BACKUP · WRITE THE MIGRATION" },
-      { t: now - 60e3, k: "kill", who: "Ember", unit: "TF", gun: "gun-ar", tgt: "AUTH FIX" },
+      { t: now - 60e3, k: "kill", who: "Ember", unit: "TF", gun: "gun-ar", tgt: "AUTH FIX · 12m" },
       { t: now - 20e3, k: "info", who: "COMMAND", unit: "HQ", gun: "", tgt: "UAV ONLINE" },
     ],
   },
@@ -49,3 +55,6 @@ const LINES = [
 /** A fake terminal for the preview layout (role "demoterm"). */
 export const demoTerm = (div, P) => div().size_full().bg("#0b0e0c").p(18).flex().flex_col().gap(3).children(
   LINES.map(([c, s]) => div().font_family("JetBrains Mono").text_size(13).text_color(c).child(s || " ")));
+
+// the operations list shows each contract's folder and how long a working one has run
+for (const sp of DEMO.spaces) for (const t of sp.tabs) { t.dir = sp.name; if (t.status === "working") t.working_since = now - 7 * 60e3; }

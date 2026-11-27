@@ -19,17 +19,18 @@ Everything is drawn natively from live Herdr data; the screenshot above uses inv
 | **Squad** (left) | Every agent as an operator: `[unit] callsign`, role, weapon silhouette, live action, state word, five armour plates, and its **session name**. The gear opens its loadout. |
 | **Operations** (left) | Spaces as operations (with the git branch), tabs as contracts (folder, tab name, and minutes while working). |
 | **Radar** (right) | A blip per operator and a sweep. Click a blip to jump. |
-| **Kill feed** | A finished contract is a kill: `[unit] callsign <weapon> CONTRACT`. Also under fire, engaged, deployed, extracted, commits and pushes. |
+| **Kill feed** | A finished contract is a kill: `[unit] callsign <weapon> CONTRACT 12m`, with how long it took. Also under fire, engaged, deployed, extracted, commits and pushes. |
 | **Scorestreaks** | Charged by finished contracts: UAV 3 (jump to the operator under fire), Cruise 5 (jump to a finished one), Gunship 7 (zoom the terminal), Juggernaut 9 (new terminal). |
 | **Operator card** | The focused operator: weapon, live action and stats from real tool calls (DAMAGE edits and commands, ACCURACY successes vs failures, RECON reads, DRONES subagents). |
 | **XP popup + sound** | A banner over the terminal for DIRECT HIT, DAMAGE TAKEN, CONTRACT ACCEPTED/CLEAR, RANGE CLEAR (tests), INTEL SECURED (commit), EXFIL CONFIRMED (push), DRONE DEPLOYED (subagent). Nine synthesised sounds, including a stinger for each scorestreak you call in; `SFX ON/OFF` in the bottom bar. |
 | **Loadout** | The gear on a row, LOADOUT on the card, or `ctrl-shift-o`: 9 weapons (assault rifle, AK and bullpup have their own silhouettes), 8 camos, 3 perk slots. Saved per terminal. |
 | **Operations map** | `ctrl-shift-m` or the MAP button: operations as grid zones, contracts as pins, operators standing on them. Click to jump. |
 | **Medals** | Bonus banners on a finished contract: DOUBLE / TRIPLE CLEAR (several within a minute), FLAWLESS (no tool failures), BOSS DOWN (3 or more failures), FIRST BLOOD (first of the day). Also in the kill feed. |
-| **Challenges** | Three a day, the same all day, reset at midnight: always "clear 5 contracts" plus two of tests, pushes, commits, flawless clears, medals, drones. Each is worth 50 XP of rank. |
+| **Challenges** | Three a day, the same all day, reset at midnight: always "clear 5 contracts" plus two of tests, pushes, commits, flawless clears, medals, drones. Each is worth 50 XP of rank. Two **weekly** ones (bigger numbers, reset Monday) are worth 150 XP each. |
 | **Weapon mastery** | A weapon levels up (1 to 10) with hits from any operator carrying it: successful edits and commands. Levels unlock camos for that weapon (Desert 2, Arctic 3, Digital 4, Tiger 5, Gold 7, Dark Matter 10). The loadout shows the level, the card button shows `L6`, and a level-up pops a banner. Your hits so far count the first time. |
-| **Rank** | PVT to GEN, one rank per 25 finished contracts (a challenge counts as two); a `PROMOTED TO` banner marks each rank-up; `RESET RANK` in the debrief starts over. |
-| **Debrief** | `ctrl-shift-d` or the DEBRIEF button: contracts cleared, rank, streak points, and per-operator damage, accuracy, recon and drones with an MVP. |
+| **Rank** | PVT to GEN, one rank per 25 finished contracts (a challenge counts as two); a `PROMOTED TO` banner marks each rank-up; `PRESTIGE` at GEN (debrief) starts over with a star, `RESET RANK` starts over without. |
+| **Debrief** | `ctrl-shift-d` or the DEBRIEF button: contracts cleared, rank, streak points, a lifetime record, and per-operator damage, accuracy, recon and drones with an MVP. |
+| **Calling cards** | A title per operator (ACE, PUSH MASTER, UNTOUCHABLE, ...) unlocked by your lifetime record and picked in the loadout; it shows on the operator card. |
 | **Camo packs** | Click a swatch in the bottom bar: MODERN, NVG, ARCTIC, ZOMBIES, HAZARD. Matching terminal themes (`Fireteam`, `Fireteam-NVG`, …) are in the settings theme picker. |
 
 **Perks** (each acts on the HUD): Ghost hides the operator from radar and compass; Cold-Blooded makes failed tools
