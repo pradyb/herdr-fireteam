@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.3]
+
+### Changed
+- File edits (DIRECT HIT) are silent too: every hit pops up without a sound; tests, commits, pushes, clears, damage and streaks keep theirs
+
 ## [0.4.2]
 
 ### Changed

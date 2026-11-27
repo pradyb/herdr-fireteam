@@ -92,7 +92,7 @@ export default class Side {
         if (!s || !old) continue; // first look: a baseline, not an event
         const newTask = s.tache !== old.tache, base = newTask ? 0 : old.coups ?? 0;
         if (newTask) P(a, "info", "CONTRACT ACCEPTED", 0);
-        if ((s.coups ?? 0) > base) { const n = s.coups - base; bump(a.address, "hits", n); P(a, "hit", s.outil === "Bash" ? "COMMAND RUN" : "DIRECT HIT", 10 * n, s.outil === "Bash"); // a command run pops up but stays silent
+        if ((s.coups ?? 0) > base) { const n = s.coups - base; bump(a.address, "hits", n); P(a, "hit", s.outil === "Bash" ? "COMMAND RUN" : "DIRECT HIT", 10 * n, true); // hits (edits, commands) pop up but stay silent
           const gun = opOf(a.address, a.program).gun, was = levelOf(mast[gun] ?? 0).lv; mast[gun] = (mast[gun] ?? 0) + n;
           const now2 = levelOf(mast[gun]).lv;
           if (now2 > was) { const un = unlocked(was, now2); P(a, "kill", `${gun} LEVEL ${now2}`, 0); line(a, "warn", `★ ${gun} LEVEL ${now2}${un.length ? ` · ${un.join(", ")} CAMO` : ""}`); snd = "ready"; }
